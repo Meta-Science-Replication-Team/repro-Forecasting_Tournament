@@ -1,0 +1,368 @@
+---
+title: "Predictions after COVID-19"
+output:
+  html_document:
+    code_folding: show
+    highlight: textmate
+    lib_dir: site_libs
+    self_contained: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 5
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '5'
+editor_options:
+  
+  chunk_output_type: console
+---
+
+```{r setup, include = F}
+
+knitr::opts_chunk$set(
+  warning = F, # show warnings during codebook generation
+  message = F, # show messages during codebook generation
+  error = F, # do not interrupt codebook generation in case of errors,
+                # usually better for debugging
+  echo = T,  # show R code
+fig.width=12, 
+fig.height=8)
+
+options(max.print = 20000, scipen = 100)
+
+```
+
+
+```{r libraries}
+
+library(haven)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(cowplot)
+library(gridExtra)
+library(tidyr)
+library(plotly)
+library(lme4)
+library(jtools)
+library(forcats)
+library(car)
+
+```
+
+
+```{r import}
+
+setwd("C:\\Users\\igrossma\\Dropbox\\Predictions\\") 
+
+pred.df<-read.csv("predictions.csv")
+```
+
+
+# Data Cleaning
+
+```{r remove.bad.responses}
+
+# Remove missing reposnses for participants who either skipped or did not enter anything for key variables.
+
+# Recode - 99 to Missing
+pred.df[pred.df == -99] <- NA
+
+pred.df$filter <- rowSums(pred.df[,c("trust_rating_1", "trust_rating_2", "trust_rating_3", "trust_probability_1", "sat_rating_1", "sat_rating_2", "sat_rating_3", "sat_probability_1", "dep_rating_1", "dep_rating_2", "dep_rating_3", "dep_probability_1", "pol_rating_1", "pol_rating_2", "pol_rating_3", "pol_probability_1", "ind_rating_1", "ind_rating_2", "ind_rating_3", "ind_probability_1", "trad_rating_1", "trad_rating_2", "trad_rating_3", "trad_probability_1", "grat_rating_1", "grat_rating_2", "grat_rating_3", "grat_probability_1", "ex_pre_rating_1", "ex_pre_rating_2", "ex_pre_rating_3", "ex_pre_probability_1", "imp__pre_rating_1", "imp__pre_rating_2", "imp__pre_rating_3", "imp_pre_probability_1", "cli_rating_1", "cli_rating_2", "cli_rating_3", "cli_probability_1", "birth_rating_1", "birth_rating_2", "birth_rating_3", "birth_probability_1")], na.rm = T)
+
+pred.df.clean <- pred.df %>% filter(filter != 0)
+
+# Removed: 668 - 471 = 197 participants who basically just skipped throught the survey.
+
+```
+
+<br>
+
+> 30% of the sample just clicked through and did not even fill out the key parts.
+
+```{r remove.duplicate.responses}
+
+# Create row number variable
+
+pred.df.clean$Row.num <- seq(1, nrow(pred.df.clean), 1)
+
+duplicates.1 <- duplicated(pred.df.clean$IPAddress, fromLast = T)
+
+duplicates.2 <- duplicated(pred.df.clean$IPAddress, fromLast = F)
+
+# pulled out the index of duplicated values
+
+duplicate.rows <- which(duplicates.1 == T | duplicates.2 == T)
+
+# Viewed all duplicated values and made a list below of which ros to drop
+#View(pred.df.clean[duplicate.rows, c("IPAddress", "Row.num", "Progress","StartDate", "EndDate")])
+
+# 309 - first incomplete attempt - 20%
+# 293 - first incomplete attempt - 17%
+# 301 - first incomplete attempt - 30%
+# 345 - first incomplete attempt - 55%
+# 283 - first incomplete attempt - 27%
+# 445 - first incomplete attempt - 30%
+# 388 - second complete attempt going with the first.
+
+rows.to.remove <- c(309, 293, 301, 345, 283, 445, 388)
+
+pred.df.clean.x <- filter(pred.df.clean, !(Row.num %in% rows.to.remove))
+
+# removed 7 duplicates.
+
+```
+
+```{r additional.bad.responses}
+
+# Age: 109, 234 and 3254236 - their responses look weird - I don't trust them
+
+age.to.remove <- as.numeric(unlist(pred.df.clean.x[which(pred.df.clean.x$age > 108), "Row.num"]))
+
+pred.df.clean.x.x <- filter(pred.df.clean.x, !(Row.num %in% c(age.to.remove, 412, 190)))
+
+# removed 5 additional participants. - 412: one person didn't enter anything and then entered f*** u for country.
+# 190 - test response
+
+```
+
+## Summary
+
+> Started with **`r nrow(pred.df)`** responses. First removed **`r nrow(pred.df) - nrow(pred.df.clean)`** participants because they just clicked through the survey without responding. Then removed another **`r nrow(pred.df.clean) - nrow(pred.df.clean.x)`** duplicate responses. Finally removed **`r nrow(pred.df.clean.x) - nrow(pred.df.clean.x.x)`**. Left with **`r nrow(pred.df.clean.x.x)`** participants.
+
+# Descriptives
+
+```{r all.graphs}
+
+# Age
+
+age.plot <- ggplot(pred.df.clean.x.x, aes(x = age)) + 
+  geom_histogram(color = "white") + 
+  ggpubr::theme_pubclean(base_size = 16) + 
+  theme_minimal(base_size = 16) + 
+  theme(axis.line = element_line(color = "gray")) + 
+  labs(x = "Age", y = "Frequency") + 
+  geom_vline(xintercept = mean(pred.df.clean.x.x$age, na.rm = T), colour = "red", linetype = 2, size = 1)
+
+# Level
+
+level.labels <- c("tenured \nfaculty", "nontenured \nfaculty", "adjunct \nprofessor", "postdoc", "graduate \nstudent", "research \nscientist", "other")
+
+level.plot <- ggplot(pred.df.clean.x.x, aes(x = level)) + 
+  geom_histogram(color = "white",  binwidth = 1, boundary = 0.5) + 
+  ggpubr::theme_pubclean(base_size = 16) + 
+  theme_minimal(base_size = 16) + 
+  theme(axis.line = element_line(color = "gray")) + 
+  labs(x = "Level", y = "Frequency") + 
+  geom_vline(xintercept = mean(pred.df.clean.x.x$level, na.rm = T), colour = "red", linetype = 2, size = 1) + 
+  scale_x_continuous(breaks = seq(1, 7, 1), labels = level.labels)
+
+# Unisize
+
+unisize.labels <- c("< 10", "11-100", "101-\n1,000", "1,001-\n10,000", "10,001-\n50,000", "50,000+")
+
+unisize.plot <- ggplot(pred.df.clean.x.x, aes(x = unisize)) + 
+  geom_histogram(color = "white",  binwidth = 1, boundary = 0.5) + 
+  ggpubr::theme_pubclean(base_size = 16) + 
+  theme_minimal(base_size = 16) + 
+  theme(axis.line = element_line(color = "gray")) + 
+  labs(x = "Unisize", y = "Frequency") + 
+  geom_vline(xintercept = mean(pred.df.clean.x.x$unisize, na.rm = T), colour = "red", linetype = 2, size = 1) + 
+  scale_x_continuous(breaks = seq(2, 7, 1), labels = unisize.labels)
+
+# Field of research
+
+research.labels <- c("Psychology", "Neuroscience", "Medicine", "Sociology", "Political \nscience", "Economics", "Epidemiology", "Biology", "Computer \nscience", "Other")
+
+research.plot <- ggplot(pred.df.clean.x.x, aes(x = research)) + 
+  geom_histogram(color = "white",  binwidth = 1, boundary = 0.5) + 
+  ggpubr::theme_pubclean(base_size = 16) + 
+  theme_minimal(base_size = 16) + 
+  theme(axis.line = element_line(color = "gray")) + 
+  labs(x = "Field of Research", y = "Frequency")  + 
+  scale_x_continuous(breaks = seq(1, 10, 1), labels = research.labels)
+
+```
+
+## Table
+
+```{r all.descriptives}
+
+knitr::kable(describe(pred.df.clean.x.x[,c("age", "unisize", "level")]), digits = 2)
+
+```
+
+## Graph
+
+```{r all.graphs.combine, fig.width = 12, fig.height=14}
+
+marrangeGrob(
+    grobs = list(age.plot, unisize.plot, level.plot, research.plot),
+    widths = c(1, 1),
+    heights = c(2, 2, 2),
+    layout_matrix = rbind(c(1, 2),
+                          c(3, 3),
+                          c(4, 4)
+                          ))
+```
+
+## Frequencies
+
+```{r all.frequencies}
+
+table(pred.df.clean.x.x$gender)
+
+table(pred.df.clean.x.x$residence)
+
+```
+
+```{r fix.residence}
+
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("CAN", "canada")] <- "Canada"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("U.S.A", "U.S.A.", "united states", "United States of America", "us", "US", "usa", "Usa", "USA", "USA/Russia", "El Paso", "utah", "United States", "U.S.", "Los Angeles")] <- "Unites States"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("Uk", "United Kingdom", "UK")] <- "United Kingdom"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("germany")] <- "Germany"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("india")] <- "India"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("Hk")] <- "Hong Kong"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("netherlands", "NL", "The Netherlands")] <- "Netherlands"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("sweden")] <- "Sweden"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("switzerland")] <- "Switzerland"
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("Turkru")] <- "Turkey"
+
+pred.df.clean.x.x$residence[pred.df.clean.x.x$residence %in% c("Public Affairs", "Riverside")] <- NA
+
+knitr::kable(table(pred.df.clean.x.x$residence))
+
+```
+
+
+## Confidence
+
+```{r confidence}
+
+knitr::kable(describe(pred.df.clean.x.x[,c(grep("probability_1", names(pred.df.clean.x.x)))]), digits = 2)
+
+```
+
+## Summary
+
+> * Average age is about 40. <br>
+> * Gender is close to 50 - 50 split. <br>
+> * Most of the participants are either faculty members or grad students in Psychology. Not enough variance to do comparisons with other fields. However, could do graduate students and postdocs vs. tenured and non-tenured faculty. <br>
+> * Most participants come from small to large universities in Canada and North America. If we want to use this variable it would need to be fixed as people spelled countried differently.
+> * Everyone is from college/university.
+
+
+
+
+# Visualize
+
+```{r convert.to.lng}
+
+# Rename some vars for consistency
+
+colnames(pred.df.clean.x.x)[grep("pre_rating", names(pred.df.clean.x.x))] <- c("ex_rating_1", "ex_rating_2", "ex_rating_3", "imp_rating_1", "imp_rating_2", "imp_rating_3")
+
+#add zero points
+
+
+pred.df.clean.x.x$cli_rating_0<-0
+pred.df.clean.x.x$birth_rating_0<-0
+pred.df.clean.x.x$grat_rating_0<-0
+pred.df.clean.x.x$dep_rating_0<-0
+pred.df.clean.x.x$sat_rating_0<-0
+pred.df.clean.x.x$pol_rating_0<-0
+pred.df.clean.x.x$trust_rating_0<-0
+pred.df.clean.x.x$trust_rating_0<-0
+pred.df.clean.x.x$trad_rating_0<-0
+pred.df.clean.x.x$ind_rating_0<-0
+pred.df.clean.x.x$imp_rating_0<-0
+pred.df.clean.x.x$ex_rating_0<-0
+
+#no climate here, to have 10 facets later
+rating.vars.0 <- c("birth_rating_0","birth_rating_1", "birth_rating_2", "birth_rating_3",
+                   "grat_rating_0","grat_rating_1", "grat_rating_2", "grat_rating_3",
+                   "dep_rating_0","dep_rating_1", "dep_rating_2", "dep_rating_3",
+                   "sat_rating_0","sat_rating_1", "sat_rating_2", "sat_rating_3",
+                   "pol_rating_0","pol_rating_1", "pol_rating_2", "pol_rating_3",
+                   "trust_rating_0","trust_rating_1", "trust_rating_2", "trust_rating_3",
+                  "trad_rating_0", "trad_rating_1", "trad_rating_2", "trad_rating_3",
+                   "ind_rating_0","ind_rating_1", "ind_rating_2", "ind_rating_3",
+                   "imp_rating_0","imp_rating_1", "imp_rating_2", "imp_rating_3",
+                   "ex_rating_0","ex_rating_1", "ex_rating_2", "ex_rating_3")
+
+rating.vars <- c("cli_rating_1", "cli_rating_2", "cli_rating_3","birth_rating_1", "birth_rating_2", "birth_rating_3","grat_rating_1", "grat_rating_2", "grat_rating_3","dep_rating_1", "dep_rating_2", "dep_rating_3","sat_rating_1", "sat_rating_2", "sat_rating_3","pol_rating_1", "pol_rating_2", "pol_rating_3","trust_rating_1", "trust_rating_2", "trust_rating_3","trad_rating_1", "trad_rating_2", "trad_rating_3","ind_rating_1", "ind_rating_2", "ind_rating_3","imp_rating_1", "imp_rating_2", "imp_rating_3","ex_rating_1", "ex_rating_2", "ex_rating_3")
+#Igor reordered so that it fits the graphic presentation below.
+
+
+pred.df.clean.x.x.lng <- pred.df.clean.x.x %>%
+                            gather(key = "Variable", value = "Scores", rating.vars) %>%
+                            separate(Variable, into = c("Var", "Rating", "Time"), sep = "_")
+
+pred.df.clean.x.x.lng.0 <- pred.df.clean.x.x %>%
+                            gather(key = "Variable", value = "Scores", rating.vars.0) %>%
+                            separate(Variable, into = c("Var", "Rating", "Time"), sep = "_")
+
+```
+
+## Graph
+
+```{r graph.ggplot}
+
+#analysis to get estimated means
+test<-lmer(Scores~Time*Var+(1|ResponseId),data=pred.df.clean.x.x.lng)
+library(emmeans)
+summary(test)
+emmeans(test, ~Var*Time)
+#emmeans do not quite match the scores beloW!
+
+descriptives<-as.data.frame(emmeans(test, ~Var*Time))
+
+descriptives$Var <- factor(descriptives$Var , levels=c("ex", "imp", "ind", "trad", "trust", "pol","sat","dep","grat","birth","cli"))
+
+descriptives$Var<-factor(descriptives$Var, labels =  c("Explicit \nPrejudice", "Implicit \nPrejudice", "Individualism", "Traditionalism", "Generalized \nTrust","Political \nPolarization","Life \nSatisfaction","Depression","Delay \nGratification","Birth Rate", "Concern about \nClimate Change"))
+
+
+ggplot(descriptives, aes(x = Time, y = emmean, colour = Var, fill = Var, group = Var)) + 
+  facet_wrap(. ~ Var, ncol = 3) + 
+  geom_point(size = 1.5, show.legend = T, position = position_dodge(0)) + 
+  geom_line(size = 0.5, show.legend = F, position = position_dodge(0)) +
+  geom_errorbar(aes(ymin=asymp.LCL, ymax=asymp.UCL), size = 0.3, position = position_dodge(0), show.legend = F, width = 0.05) +   scale_y_continuous(breaks = seq(-20, 20, 10)) + 
+  scale_x_discrete(labels = c("6 \nMonths", "1 \nYear", "2 \nYears")) + 
+  coord_cartesian(ylim = c(-20, 20)) + 
+  labs(x = "Timeline", y = "% Change", colour = "Issue", fill = "Issue") + 
+  ggpubr::theme_pubclean(base_size = 12) + 
+  theme_minimal(base_size = 12) +
+  theme(axis.line = element_line(colour = "gray"), legend.position = "top") +
+  theme(legend.position = "none")
+
+
+#test with time as a continuous variable in month
+pred.long<-pred.df.clean.x.x.lng.0
+pred.long$Timeline[pred.long$Time=="0"]<-1
+pred.long$Timeline[pred.long$Time=="1"]<-2
+pred.long$Timeline[pred.long$Time=="2"]<-3
+pred.long$Timeline[pred.long$Time=="3"]<-4
+
+pred.long$Var <- factor(pred.long$Var , levels=c("ex", "imp", "ind", "trad", "trust", "pol","sat","dep","grat","birth"))
+
+pred.long$Var<-factor(pred.long$Var, labels =  c("Explicit \nPrejudice", "Implicit \nPrejudice", "Individualism", "Traditionalism", "Generalized \nTrust","Political \nPolarization","Life \nSatisfaction","Depression","Delay of \nGratification","Birth Rate"))
+
+
+
+library(ggthemes)
+
+ggplot(pred.long, aes(x = Timeline, y = Scores, colour = Var)) + geom_boxplot(inherit.aes = F, aes(x = Time, y = Scores, colour = Var,alpha = 0.5))+
+  #geom_point( alpha = 0.05) +
+  geom_smooth(method = "loess")+  facet_wrap(. ~ Var, ncol = 5) + theme_minimal() +
+  theme(axis.line = element_line(colour = "gray"), legend.position = "top") +
+  theme(legend.position = "none")+scale_x_discrete(name="Timeline", labels = c("0"="Now","1"="6 Months","2"="Year","3"="2 Years")) +
+  scale_y_continuous(name="% Change", limits=c(-50, 50))
+
+
+
+
+
+```
+
