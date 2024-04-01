@@ -7,3 +7,5 @@ Only these two files are included in `OSF_6wgbj`.
 The folder `Forecasting_Tournament_2020-11-17` is the unzipped version of an 
 archive with the same name downloaded from the Forecasting Collaborative website 
 that was used for recruitment: https://predictions.uwaterloo.ca/faq/ 
+general instructions: step 1: https://predictions.uwaterloo.ca/instructions/ 
+

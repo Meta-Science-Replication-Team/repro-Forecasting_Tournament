@@ -1,0 +1,33 @@
+---
+title: "Notes and screaming in the void"
+author: "Ana Martinovici"
+date: "Last compiled on `r Sys.time()`"
+output: 
+    bookdown::html_document2:
+        toc: true
+        css: style.css
+        toc_float: 
+            collapsed: false
+        number_sections: true
+        code_folding: show
+        theme: cerulean
+editor_options: 
+  chunk_output_type: console
+---
+
+This is the doc where I take notes as I read the paper or work on reproducing the results.
+
+# Notes on the paper
+
+The core RQ of the paper is "How well can social scientists predict societal change, and what processes underlie their predictions?".
+
+To check:
+
+- do people predict "change" or do they predict the level?
+
+# Plan
+
+- check the match between the preregistration plan of the paper (submitted by the authors) and the final paper
+
+
+
