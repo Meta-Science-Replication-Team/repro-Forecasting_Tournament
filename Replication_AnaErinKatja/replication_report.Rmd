@@ -1,0 +1,52 @@
+---
+title: "Replication report"
+author: "Erin Buchanan, Ana Martinovici, Ekaterina Pronizius (alphabetic order)"
+date: "Last compiled on `r Sys.Date()`"
+output: 
+    bookdown::html_document2:
+        toc: true
+        toc_float: 
+            collapsed: false
+        number_sections: true
+        code_folding: show
+        theme: cerulean
+editor_options: 
+  chunk_output_type: console
+---
+
+We will conduct a robustness reproduction for a subset of the claims and results reported in the following article: The Forecasting Collaborative. Insights into the accuracy of social scientists’ forecasts of societal change. Nat Hum Behav 7, 484–501 (2023). https://doi.org/10.1038/s41562-022-01517-1)
+
+# Current knowledge about the article and materials
+
+We have looked into the article and materials provided by the authors enough to be able to come up with a pre-re-analysis plan, but we have not yet reproduced any of the results in the article. This is what we have done so far:
+
+- we have saved copies of:
+
+  - the published article, supplementary materials, open practices form, and peer review info for the article
+  - the public GitHub repository associated with the paper (https://github.com/grossmania/Forecasting-Tournament)
+  - OSF projects mentioned in the article and/or other materials: `vqd4a` and `6wgbj`
+  - instructions provided to participants and publicly available on the Forecasting Collaborative website: https://predictions.uwaterloo.ca/instructions/ 
+
+- we have looked through the content of the GitHub repository enough to know that computational reproducibility is very unlikely. At a minimum, we will need to make changes to ensure the analysis scripts read in the correct datasets (the current version of the analysis has hard coded paths that can only work on the device of one of the original authors). We hope that this is the only issue we need to fix, but we have not yet tried it.
+
+- we have read through the article and other materials to get a general idea about the data that was collected.
+
+# Pre-re-analysis plan
+
+The article aims to answer "How well can social scientists predict societal change, and what processes underlie their predictions?" (abstract, page 484). Our robustness reproduction will focus on a subset of the analyses reported in the paper. Specifically, we will focus on results and claims reported in the section "How accurate were behavioural and social scientists at forecasting?" (pages 485-486). For this section, we plan to:
+
+1. check computational reproducibility using the data and code provided by the authors. We expect that we have to make changes in order to execute the analysis code, and we aim to many as few changes as possible. 
+
+We plan to spend at most 12 hours on this step (3 sessions of max 4 hours, spread over several days). Within the team we have extensive experience with R, statistics, and good practices for computational reproducibility. We think that 12 hours of work is a very high amount of effort, and ideally readers should be able to reproduce results in a much shorter amount of time (<2 hours). We will report the amount of time that we spend and the changes we have to make to the existing code.
+
+2. check the match between the preregistration plan of the paper (submitted by the authors) and the final paper
+3. check robustness reproducibility by using a different operationalization of forecasting accuracy (i.e., the DV). Instead of MASE, we will use MAPE (mean absolute percent error) and use random effects for domain.
+4. check robustness reproducibility by examining how sensitive the results are when accounting for forecast size (i.e., the number of claims that participating teams self-selected into submitting).
+5. perform a robustness comparison to judgements of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ real answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
+
+For items 1 and 2 we will take a more confirmatory approach, as we are trying to reproduce the original results in the paper using the data, code, and materials provided by the authors. 
+For items 3, 4, and 5 we will take a more exploratory approach. We summarize here what we plan to do, but we expect that we will need to make additional choices when performing the analysis that we cannot foresee based on the current knowledge we have about the article and materials. As we start working on this, we might discover aspects that require a change of plan (e.g., due to data availability we cannot estimate the models we plan to). In the final report we will describe our choices. 
+
+
+
+
