@@ -1868,22 +1868,5 @@ partR2(
 
 model.phase1.together<-  lmer(log(MASE1_w1)~domain*isExpert.factor+(1|ResponseId), data=phase1)
 car::Anova(model.phase1.together,type="III", test.statistic="F") #sig interaction!
-data.phase1.MASE.together<-as.data.frame(emmeans(model.phase1.together, pairwise~domain*isExpert.factor, adjust = "none", type = "response")$emmeans %>% rbind(adjust=T)) #backtransformed to the original scale and adjusted for simulatenous inference
-plot(model.phase1.together) #residuals show adequate transformation ( compared to non-transformed and sqroot transformations)
-
-summ(model.phase1.together, digits = 8)
-#Pseudo-R² (fixed effects) = 0.28053205
-
-partR2(model.phase1.together,partvars=c("isExpert.factor","isExpert.factor:domain"), nboot=100, parallel=T)
-
-#test the difference between experts and lay people
-model.layVSsci.phase1<-  lmer(log(MASE1_w1)~domain*isExpert.factor+(1|ResponseId), data=phase1)
-car::Anova(model.layVSsci.phase1,type="III",test.statistic="F") #sig interaction!
-data.phase1.MASE.explaycomp<-as.data.frame(emmeans(model.layVSsci.phase1,revpairwise ~isExpert.factor|domain,  type="response")$contrasts%>% rbind(adjust="fdr")) #get the estimates in a dataframe
-
-emmeans(model.layVSsci.phase1,revpairwise ~isExpert.factor|domain,  type="response")$contrasts%>%
-	rbind(adjust="fdr") #get FDR correction across all pairwise tests
-
-eff_size(emmeans(model.layVSsci.phase1,revpairwise ~isExpert.factor|domain,  type="response"),sigma = sigma(model.layVSsci.phase1), edf =df.residual(model.layVSsci.phase1)) %>% rbind(adjust="mvt") #using the smallest DF among the three #adjusting for muliple testing via mvt (which is less conservative and more "exact' compared to Bonferroni)
 ```
 
