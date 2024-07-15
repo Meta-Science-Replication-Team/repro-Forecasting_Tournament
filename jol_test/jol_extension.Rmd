@@ -1,0 +1,31 @@
+---
+title: "JOL Extension"
+author: "Erin Buchanan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The Plan
+
+Perform a robustness comparison to judgements of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ real answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
+
+## Libraries
+
+## Data
+
+```{r}
+# dat <- read.csv("../dat_for_analyses.csv", stringsAsFactors = FALSE)
+dat_long <- read.csv("../dat_long.csv", stringsAsFactors = FALSE)
+
+# actual / real answer ... historical data by month 
+
+# predicted answer ... month variables
+
+# domain / team_name 
+```
+
+## Analysis 
