@@ -11,21 +11,167 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## The Plan
 
-Perform a robustness comparison to judgements of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ real answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
+Perform a robustness comparison to judgments of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ real answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
 
 ## Libraries
+
+```{r}
+library(rio)
+library(dplyr)
+library(nlme)
+library(tidyr)
+library(easystats)
+library(ggplot2)
+```
 
 ## Data
 
 ```{r}
-# dat <- read.csv("../dat_for_analyses.csv", stringsAsFactors = FALSE)
-dat_long <- read.csv("../dat_long.csv", stringsAsFactors = FALSE)
-
 # actual / real answer ... historical data by month 
+DF_actual <- import("../historical_data.csv") %>% 
+	select(-V1) %>% 
+	pivot_longer(cols = -Month, 
+			 names_to = "domain",
+			 values_to = "Actual_Score") %>% 
+	na.omit()
+	
 
 # predicted answer ... month variables
+DF_predicted <- import("../Wave1+2data.csv") %>% 
+	select(team_name, domain, Month.1:Month.18) %>% 
+	pivot_longer(cols = c(Month.1:Month.18),
+			 names_to = "Month", 
+			 values_to = "Predicted_Score") %>% 
+	mutate(Month = gsub("Month.", "", Month),
+		 Month = as.integer(Month))
 
-# domain / team_name 
+# merge together
+DF_long <- DF_predicted %>% 
+	left_join(
+		DF_actual, 
+		by = c("domain", "Month")
+	) %>% 
+	na.omit()
+
+# rescale
+DF_long %>% 
+	group_by(domain) %>% 
+	summarize(min = min(Actual_Score),
+		    max = max(Actual_Score),
+		    min_p = min(Predicted_Score),
+		    max_p = max(Predicted_Score))
+
+DF_long <- DF_long %>% 
+	mutate(Actual_Score = 
+		 	ifelse(
+		 		domain == "ideoldem" | domain == "ideolrep" | domain == "polar", 
+		 		Actual_Score / 100, 
+		 		Actual_Score), 
+		 Predicted_Score = 
+		 	ifelse(
+		 		domain == "ideoldem" | domain == "ideolrep" | domain == "polar", 
+		 		Predicted_Score / 100, 
+		 		Predicted_Score), 
+		 Actual_Score = 
+		 	ifelse(
+		 		domain == "negaffect" | domain == "posaffect" | domain == "lifesat", 
+		 		Actual_Score / 7, 
+		 		Actual_Score), 
+		 Predicted_Score = 
+		 	ifelse(
+		 		domain == "negaffect" | domain == "posaffect" | domain == "lifesat", 
+		 		Predicted_Score / 7, 
+		 		Predicted_Score),
+		 Actual_Score = ifelse(
+		 	domain == "eafric" | domain == "easian" | domain == "posaffect",
+		 	-Actual_Score,
+		 	Actual_Score
+		 ),
+		 Predicted_Score = ifelse(
+		 	domain == "eafric" | domain == "easian" | domain == "posaffect",
+		 	-Predicted_Score,
+		 	Predicted_Score
+		 )
+	)
+		 
 ```
 
-## Analysis 
+## Analysis: Calculate Bias and Sensitivity
+
+```{r}
+store_results <- list()
+iter <- 1
+for (i in unique(DF_long$team_name)) {
+	for (q in unique(DF_long$domain)){
+		# cat(i)
+		temp <- DF_long %>% 
+			filter(team_name == i) %>% 
+			filter(domain == q)
+		
+		if (nrow(temp) > 0){
+		temp.model <- lm(
+			Actual_Score ~ Predicted_Score, 
+			data = temp
+		)
+		store_results[[iter]] <- data.frame(
+			team = i,
+			domain = q, 
+			bias = coef(temp.model)[1],
+			sensitivity = coef(temp.model)[2],
+			n_est = nrow(temp)
+		)
+		iter <- iter + 1
+		}
+	}
+}
+```
+
+## Analysis: Analyze
+
+```{r}
+DF_results <- bind_rows(store_results)
+
+model.bias <- lme(
+	fixed = bias ~ 1, 
+	data = DF_results,
+	random = list(~1|domain)
+	)
+
+summary(model.bias)
+
+model.sensitivity <- lme(
+	fixed = sensitivity ~ 1, 
+	data = DF_results,
+	random = list(~1|domain),
+	na.action = "na.omit"
+	)
+
+summary(model.sensitivity)
+```
+
+```{r}
+ggplot(DF_results, aes(sensitivity, bias, color = domain)) + 
+	geom_point() + 
+	theme_classic() + 
+	xlab("Sensitivity") + 
+	ylab("Bias") + 
+	theme(legend.position = "none")
+
+ggplot(DF_results %>% 
+	 	filter(sensitivity > -50), 
+	 aes(sensitivity, bias, color = domain)) + 
+	geom_point() + 
+	theme_classic() + 
+	xlab("Sensitivity") + 
+	ylab("Bias")
+
+ggplot(DF_results, aes(sensitivity, bias, color = team)) + 
+	geom_point() + 
+	theme_classic() + 
+	facet_grid(~domain) + 
+	xlab("Sensitivity") + 
+	ylab("Bias") + 
+	theme(legend.position = "none")
+```
+
+
