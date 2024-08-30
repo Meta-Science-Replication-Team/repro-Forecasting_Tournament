@@ -1,6 +1,6 @@
 ---
-title: "Notes and screaming in the void"
-author: ""
+title: "Preregistration of the Paper"
+author: "EP"
 date: "Last compiled on `r Sys.time()`"
 output: 
     bookdown::html_document2:
