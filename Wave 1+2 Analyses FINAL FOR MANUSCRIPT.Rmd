@@ -44,7 +44,7 @@ options(max.print = 20000, scipen = 1000)
 
 ```{r setup working directory}
 
-setwd("~/GitHub/Forecasting-Tournament") #igor's working directory
+#setwd("~/GitHub/Forecasting-Tournament") #igor's working directory
 
 ```
 
