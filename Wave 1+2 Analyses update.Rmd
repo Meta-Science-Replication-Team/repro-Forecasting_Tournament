@@ -37,7 +37,7 @@ options(max.print = 20000, scipen = 1000)
 ```
 
 ```{r setup working directory}
-setwd("~/GitHub/Forecasting-Tournament") #igor's working directory
+#setwd("~/GitHub/Forecasting-Tournament") #igor's working directory
 ```
 
 ```{r Import Data}
@@ -1144,15 +1144,15 @@ median.ranks<-median.ranks %>% left_join(t.comparison.effects) %>% left_join(t.c
 median.ranks$sig<-ifelse(median.ranks$p.value<.05,"eff","noeff")
 median.ranks$MASE<-round(median.ranks$response,2) #two decimals
 median.ranks$ranksize<-round(median.ranks$ratio,2) #two decimals
-newggslopegraph(dataframe = median.ranks,
-                Times = Wave,
-                Measurement = MASE,
-                Grouping = Domain,LineThickness = 2,
-                WiderLabels=T,
-                Title = "Which domains are harder to predict?",TitleJustify = "center",
-                SubTitle = NULL,
-                Caption = "Ranking based on MASE scores per domain",
-                ThemeChoice="ipsum")+scale_color_d3(palette = "category20")+geom_line(aes(linetype=sig, color="black",alpha=1))
+# newggslopegraph(dataframe = median.ranks,
+#                 Times = Wave,
+#                 Measurement = MASE,
+#                 Grouping = Domain,LineThickness = 2,
+#                 WiderLabels=T,
+#                 Title = "Which domains are harder to predict?",TitleJustify = "center",
+#                 SubTitle = NULL,
+#                 Caption = "Ranking based on MASE scores per domain",
+#                 ThemeChoice="ipsum")+scale_color_d3(palette = "category20")+geom_line(aes(linetype=sig, color="black",alpha=1))
 ```
 
 # ranking of domain by forecasting error and correlation to historical variability in trends
@@ -1259,7 +1259,7 @@ partR2(model.t1.t2.lastsix, partvars =
 
 dat_long_phase1_exp<-(subset(dat_long_phase1, isExpert.factor == 'Academic'))
 
-dat_long_phase1_exp_wide_by_month<-dat_long_phase1_exp %>%dplyr::dplyr::select(domain,team_name,Month,value.dif) %>%  pivot_wider(names_from=c(Month),values_from=c(value.dif))
+dat_long_phase1_exp_wide_by_month<-dat_long_phase1_exp %>%dplyr::select(domain,team_name,Month,value.dif) %>%  pivot_wider(names_from=c(Month),values_from=c(value.dif))
 
 dat_long_phase1_exp_wide_by_month$odd_month_inaccuracy=rowMeans(dat_long_phase1_exp_wide_by_month[c("1","3","5","7","9","11")],na.rm=T)
 
@@ -1283,7 +1283,7 @@ dat_long_phase2<-dat_long %>%filter(!(phase == 1 & revised == 1)& Method.code!="
 
 
 
-dat_long_phase2_exp_wide_by_month<-dat_long_phase2 %>%dplyr::dplyr::select(domain,team_name,Month7,value.dif) %>%  pivot_wider(names_from=c(Month7),values_from=c(value.dif))
+dat_long_phase2_exp_wide_by_month<-dat_long_phase2 %>%dplyr::select(domain,team_name,Month7,value.dif) %>%  pivot_wider(names_from=c(Month7),values_from=c(value.dif))
 
 dat_long_phase2_exp_wide_by_month$odd_month_inaccuracy=rowMeans(dat_long_phase2_exp_wide_by_month[c("1","3","5")],na.rm=T)
 
@@ -1570,8 +1570,8 @@ plot.COV$data<-plot.COV$data %>% arrange(estimate) %>%    # First sort by val. T
   mutate(term=factor(term, levels=term))
   plot.COV+theme_pubclean()+labs(y="",x="Contribution to Accuracy",caption = "most negative <===========================================> most positive")
   
-export_summs(model.bothTournaments.accuracy.COVs, scale = TRUE, robust = "HC1",n.sd = 2, to.file = "docx", file.name="indiv.differences.standartized.docx")
-export_summs(model.bothTournaments.accuracy.COVs, scale = F, robust = "HC1", to.file = "docx", file.name="indiv.differences.unstandartized.docx")
+# export_summs(model.bothTournaments.accuracy.COVs, scale = TRUE, robust = "HC1",n.sd = 2, to.file = "docx", file.name="indiv.differences.standartized.docx")
+# export_summs(model.bothTournaments.accuracy.COVs, scale = F, robust = "HC1", to.file = "docx", file.name="indiv.differences.unstandartized.docx")
 
 partr2.COV<-partR2(model.bothTournaments.accuracy.COVs,  data=both.sets,
               R2_type = "marginal", nboot = 10, CI = 0.95)
