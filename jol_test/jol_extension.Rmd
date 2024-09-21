@@ -299,15 +299,12 @@ for (team in teams){
 					values_from = Predicted_Score) %>% 
 			select(-team_name)
   
-		  if (nrow(temp) > 2){
 		  	no_variable[[paste0(team, "_", phase_num)]] <- data.frame(
 		  		sd = apply(temp %>% select(-domain), 1, sd, na.rm = T),
 		  		domain = temp$domain,
 		  		team = team, 
 		  		phase = phase_num
 		  	)
-		
-	}
   
   }
   
