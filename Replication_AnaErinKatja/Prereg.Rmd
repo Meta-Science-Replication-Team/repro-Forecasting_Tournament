@@ -18,6 +18,28 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+**Overall, the study transparently describes what is explanatory and what is confirmatory. For detailed summary, see below.**
+
+**From the authors' response to reviewers: **
+*The pre-registered plan was previously submitted to NHB (NATHUMBEHAV-200410305PI) as an inquiry in April 2020; you can find this submitted plan here https://osf.io/7ekfm. Note, it is not a conventional pre-registration. We initially aimed to present the manuscript as a pre-registered report which we submitted to the journal. We subsequently officially pre-registered our methods on September 11, 2020 https://osf.io/u9x4m. The exact copy of this report is uploaded on OSF, but the time stamp suggests a later date (in the chaos of the first COVID lockdown, we failed to upload it to the OSF and subsequently shifted focus to the actual tournament, with reports on GitHub). We have now harmonized the GitHub and OSF parts of the project, so all aspects of the project can be found together. We also added the direct link to the pre-registered plan document, and moved the section about deviations from the pre-registration to the front of the revised methods section.*
+
+*In the revision, we have restructured the manuscript (initial submission was directly forwarded from Nature, and methods were in the supplementary materials), highlighting the pre-registration section at the beginning of the revised Method section. Our pre-registration included:* 
+ - *key research questions;* 
+ - *data processing;*
+ - *locking-in forecasts of participating teams;* 
+ - *use of key metric (MASE) for evaluating performance across domains,*
+ - *naive benchmarks (e.g., simple interpolation algorithms);* 
+ - *comparison of forecasting approaches;* 
+ - *examination of opportunity to update forecasts; and* 
+ - *types of covariates we consider in analysis of exogenous variables that may enhance accuracy (e.g., confidence, conditional factors and counterfactuals, number of team members, disciplinary diversity).* 
+ - *We also pre-registered data analytic procedures, including how we categorized forecasts in terms of method, categorization of additional parameters in the model, teams, and update justifications (https://osf.io/u9x4m).* 
+ - *In addition, we pre-registered comparisons against naïve benchmarks (naïve model in forecasting literature is used synonymously with a random walk;* 
+ - *we also included historical mean as another frequently mentioned naïve method)*.
+ - *Further, we pre-registered a two-tailed comparison of MASE scores across forecasting types (purely theoretical, purely data-driven and hybrid models) in linear mixed models (MASE scores nested in teams), and a contrast of theory-free models to theory-inclusive models and use of post-hoc pairwise tests for evaluating accuracy.* 
+
+*We did not pre-register use of a lay crowd sample prior to collecting their forecasts in June 2020 (but we did pre-register this sample in early September, 2020, prior to cleaning or evaluating their data) and we deviated from the pre-registration in testing all individual predictors (e.g., team characteristics, model simplicity, number of parameters in the data model) simultaneously, instead of performing separate analyses. We explain the above in the relevant section of the revised methods section, and refer readers to the pre-registration plan we initially submitted to Nature Human Behavior for review in May 2020, and which is posted on the Open Science Framework: “Pre-registration and deviations. Forecasts of all participating teams along with their rationales were pre-registered on Open Science Framework (https://osf.io/u9x4m).* 
+
+*Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization 15 of the key dependent variable (MASE), operationalization of covariates and benchmarks (i.e., use of naive forecasting methods), along with the key analytic procedures (linear mixed model and contrasts being different forecasting approaches).* 
 
 # Study Information
 ## Hypotheses
@@ -156,14 +178,15 @@ Next, we zero-in on the COVID-19 pandemic as a conditional of interest given lin
 ### Counterfactuals.  
 Counterfactuals are hypothetical alternative historic events that would be thought to affect the forecast outcomes, if they were to occur. Participants will describe the key counterfactual events between December 2019 and April 2020 that they theorize would have led to different forecasts (e.g., U.S.-wide implementation of social distancing practices in February). Two independent coders will evaluate the distinctiveness of counterfactuals. If discrepancies arise, they will discuss individual cases with other members of the forecasting collaborative to make the final evaluation.
 :::
-**The description of the measured variable is almost identical to that provided in the manuscript. However, some information has been added to the manuscript. For example, *interrater k=0.80* or that *In the primary analyses, we focus on the presence of counterfactuals (yes/no).***
+**The description of the measured variable is almost identical to that provided in the manuscript. However, some information has been added to the manuscript. For example,** *interrater k=0.80* **or that** *In the primary analyses, we focus on the presence of counterfactuals (yes/no).*
 
 ::: infobox
 ### Team characteristics. 
 To assess objective expertise, teams report if any of their members have previously researched or published on the topic of their forecasted variable. They also report each member's areas of expertise and amount of education. To assess subjective expertise, teams will report their agreement with the statement: “My team has strong expertise on the research topic of Life Satisfaction.”
-**This part is termed as the *confidence in expertise* in the manuscript.**
-
 :::
+
+**This part is termed as the** *confidence in expertise* **in the manuscript.**
+
 ## Categorization of Forecasts
 ::: infobox
 We will categorize forecasts based on modeling approaches. Specifically, two independent research associates will categorize forecasts for each domain based on provided justifications: 
@@ -173,10 +196,15 @@ We will categorize forecasts based on modeling approaches. Specifically, two ind
  
 We will further identify modelling approaches that solely rely on extrapolation of time series from the data we provided (e.g., ARIMA, moving average with lags; yes/no). Disagreements between coders here and below will be resolved through joint discussion with the leading three authors of the project. 
 :::
+
+**The description of the categorization is almost identical to that provided in the manuscript.**
+
 ## Categorization of Additional variables
 ::: infobox
 We will test how the presence and number of additional variables as parameters in the model impact forecasting accuracy. To this end, we will ensure that additional variables are distinct from one another. Two independent coders will evaluate the distinctiveness of each reported parameter. When there are discrepancies arise, the coders will discuss the case with lead members of the forecasting collaborative to arrive at a consensus.
 :::
+**The description of the categorization is almost identical to that provided in the manuscript.**
+
 ## Categorization of Teams
 ::: infobox
 We will next categorize teams based on compositions. First, we will sort contributors into three categories: 
@@ -192,6 +220,10 @@ Next, we will sort teams based on disciplinary orientation:
  
 Finally, we will use information teams provided concerning their objective and subjective expertise level for a given subject domain. We will use each covariate in separate multi-level analyses with domains and time points as predictors and absolute percentage error scores for a given forecast as a dependent variable.
 :::
+**The preregistration entails more details regarding categorization of teams based on the group size. In the main manuscript, the authors explicitly state that they were** *"comparing behavioural and social scientists with teams from computer and data science."*
+
+**It is also unclear to which analysis in the main manuscript, the last paragraph refers. Our assumption is, the analysis presented in Fig. 6 and Supplementary Table 5. If correct, then the authors have deviated from the preregistered analysis. This deviation has been transparently declared:** *"Deviating from the pre-registration, we performed a single analysis with all covariates in the same model rather than performing separate analyses for each set of covariates, to protect against inflating P values. Furthermore, due to scale differences between domains, we chose not to feature analyses concerning absolute percentage errors of each time point in the main paper."*    
+
 ## Forecasting Update Justifications
 ::: infobox
 Given that participants will receive both new data and a summary of diverse theoretical positions they can use as a basis for their updates, two independent research associates will score participants’ justifications for forecasting updates on three dummy-categories: 
