@@ -24,6 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 *The pre-registered plan was previously submitted to NHB (NATHUMBEHAV-200410305PI) as an inquiry in April 2020; you can find this submitted plan here https://osf.io/7ekfm. Note, it is not a conventional pre-registration. We initially aimed to present the manuscript as a pre-registered report which we submitted to the journal. We subsequently officially pre-registered our methods on September 11, 2020 https://osf.io/u9x4m. The exact copy of this report is uploaded on OSF, but the time stamp suggests a later date (in the chaos of the first COVID lockdown, we failed to upload it to the OSF and subsequently shifted focus to the actual tournament, with reports on GitHub). We have now harmonized the GitHub and OSF parts of the project, so all aspects of the project can be found together. We also added the direct link to the pre-registered plan document, and moved the section about deviations from the pre-registration to the front of the revised methods section.*
 
 *In the revision, we have restructured the manuscript (initial submission was directly forwarded from Nature, and methods were in the supplementary materials), highlighting the pre-registration section at the beginning of the revised Method section. Our pre-registration included:* 
+
  - *key research questions;* 
  - *data processing;*
  - *locking-in forecasts of participating teams;* 
@@ -75,6 +76,7 @@ The behavioral science forecasting collaborative is based on a common task frame
 
 Participants were given access to this data prior to participation and were asked to submit predictions for one or more domains (see https://predictions.uwaterloo.ca/datasets/).
 :::
+**In the main manuscript, there are 12 domains, the same as preregistered (just with different numbering). What is not reported are the precise months of historical data (January 2017 to March 2020) for Tournament 1. This information can be found below, where the domains are operationalized. However, we could not find information related to Tournament 2, such as** *"The participating teams received historical data [...] that spanned 45 months for Tournament 2 ( January 2017 to September 2020), which they could use to inform their forecasts for the future values of the same time series.*
 
 Data for each domain was generated through the following processes:
 
@@ -122,17 +124,22 @@ https://osf.io/nwj35
 
 **Explicit bias: The preprint has overlapping components with the manuscript but the operationalizations are not exactly the same. The operationalization in the manuscript is more  detailed, particularly with how explicit bias and relative scores are computed. For example, that explicit bias is measured on a seven-point scale, and it includes a thorough explanation of the calculation for relative bias scores (e.g., subtracting incongruent from congruent associations).**
 
+**Participant_Responses.csv is the file contains forecasts. Some values appear inconsistent; for example, for some participants, the odd and even values are the same, respectively.** 
+
+- "R_2UgadrXE2OiyQIB	4/27/2020 3:59	TheMets	1,2,3,4,5,6,7,8,9,10	lifesat	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387"
+ - "R_2UgadrXE2OiyQIB	4/27/2020 3:59	TheMets	1,2,3,4,5,6,7,8,9,10	iasian	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38"
+
+
 # Sampling Plan
 
 ::: infobox
 ## Existing Data
-Registration prior to creation of data
-
-**This is misleading as the data exists, as pointed down below**.
+Registration prior to creation of data 
 
 ## Explanation of existing data
 Teams submitted their forecasts for the first portion of the study between late May and June 2020 and the data was reviewed by a research assistant to remove blank and duplicate entries. Accuracy data does not exist yet (we don't have a time machine!), and consequently none of the research questions for the present pre-registration can be analyzed yet.
 ::: 
+*Registration prior to creation of data* **is misleading, as the data exists, as noted below. We understand that the hypotheses could not have been tested since the predictions had not yet been submitted. However, it would have been more accurate to refer to it as** *Registration prior to analysis of the data."* 
 
 ## Data collection procedures
 ::: infobox
@@ -145,14 +152,15 @@ To ensure broad representation across the academic spectrum of relevant discipli
 ::: infobox
 Our targeted sample size was 40 teams/participants. A total of 86 different teams submitted predictions.
 
-**Correct**
-
 ### Sample size rationale
 Using GPower 3.1, we estimated that for a typical effect size for the forecasted social issues 37, f = .14, with 12 measurement points provided by participants (reflecting forecasts for 12 months), with 80% power, and an expected correlation among repeated times series data points of .7, we would need 33 scientist teams for the tournament to statistically compare accuracy among three groups (experts vs. data-based forecasts vs. hybrid-based forecasts).
 
 ### Stopping rule
 Participants were recruited over a 1 month period, with the intent of extending the deadline until the 40 team minimum was reached.
 :::
+
+**Correct, however, it is unclear how many teams had been recruited by May, when the first predictions started. Was the rationale for extending recruitment due to not having enough teams by the end of April, leading to 46 teams joining between May and mid-June? Teams that joined in mid-June 2020 likely had to submit predictions for May 2020 retrospectively and had more information compared to teams that submitted by the end of April. This raises further confusion.**
+**Further, the final sample size is double the preregistered sample size. It would be of interest to know whether the planned sample size would have yield the same results**.
 
 # Variables
 ## Measured variables
@@ -237,12 +245,26 @@ Given that participants will receive both new data and a summary of diverse theo
 ::: infobox
 We will calculate accuracy scores for each domain, using MASE (mean absolute scale error).
 ::: 
+**The authors write in their manuscript that** *Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization 15 of the key dependent variable (MASE),...*. **If the authors are referring to this document (https://osf.io/7ekfm), we fail to see the outlined operationalization of MASE. In general, it is confusing for readers to search for the operationalization of a key index in another document.**
 
 # Analysis Plan
 ## Confirmatory Analyses: Comparison of Forecasting Models
 ::: infobox
 We will first investigate overall forecasting accuracy in behavioral and social sciences by examining MASE for each of the forecasting domains. Using MASE scores will allow us to compare forecasted models against the naïve baseline model. We will also compare forecasting accuracy agaist accuracy of classic naive forecasting estimators (i. average and ii. seting all forecasts to be the value of the last observation).
 :::
+**In the manuscript, authors provide more details on the analysis. To our understanding, the conducted analysis slightly deviates from the preregistered analysis. Such as:** 
+
+**Main Text: Not reported**; **Preregistration**: *Compare forecasted models against the naïve baseline model*.
+**Comment: The main text does not explicitly mention the comparison against the naive baseline model, which creates ambiguity.**
+
+**Main Text**: *(1): The historical mean, calculated by randomly resampling the historical time series data;* **Preregistration**: *Average classic naive forecasting estimator.*
+**Comment: This is largely equivalent, but the preregistration lacks the additional detail about random resampling in the main text.**
+
+**Main Text**: *(2): A naive random walk, calculated by randomly resampling historical changes in the time series data with an autoregressive component;* **Preregistration**: *All forecasts set to the value of the last observation (less detail, and some deviation)*.
+**Comment: The preregistered version is a simpler naive random walk (just setting forecasts to the last observation), while the main text adds complexity with the autoregressive component and random resampling.**
+
+**Main Text**: *(3): Extrapolation from linear regression, based on a randomly selected interval of the historical time series data;* **Preregistration: Not reported.**
+**Comment: This is an additional method introduced in the main text that was not part of the preregistration.**
 
 ::: infobox
 ### Inference criteria
