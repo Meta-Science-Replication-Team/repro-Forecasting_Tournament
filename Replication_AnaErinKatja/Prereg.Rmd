@@ -276,6 +276,8 @@ Teams will be contacted to confirm their predictions in cases where the forecast
 ### Missing data
 For each team, any domain that does not include 12 monthly predictions will will be excluded from analysis. In the event that a partial prediction has been submitted, the team will be contacted to confirm their intended predictions.
 :::
+**The preregistered inference criteria make no reference to the Bayes factor, which is reported in the main manuscript.**
+**The data exclusion criteria in the main manuscript do not specify if and under what circumstances teams were contacted to confirm their predictions. However, according to the manuscript, the teams had the opportunity to confirm their entries upon submission.**
 
 ## Exploratory analysis
 ::: infobox
@@ -290,6 +292,8 @@ Next, we will zero-in forecasts including COVID-19 virus trajectory as a conditi
 ::: infobox
 Additionally, expert forecasts will be compared to the "wisdom of the crowds" standard by comparing the accuracy of expert forecasts to those of lay forecasts (aiming N = 200 American residents for each of the five domains - racism, gender bias, Asian-American bias, politcs, well-being; gathered at the same time via Prolific, who followed a very similar procedure completed by forecasting teams) and contrasting expertise and forecasting domain as predictors, with MASE scores nested within teams. Lay forecasts will additionally be fit to a series of linear mixed models, with forecasting domain as predictors and MASE scores for each participant.
 ::: 
+**In the main manuscript, the authors transparently state that the comparison to the 'wisdom of the crowds' was preregistered prior to data pre-processing and analysis. However, in their preregistration, they aimed for a sample size of N = 200. The final sample comprised N = 802, significantly exceeding the targeted N. The authors neither provided a justification for the increased sample size nor addressed whether the results in the main manuscript would have held with N = 200.**
+**Further, the main manuscript entails more details regarding recruitment and data cleaning.** 
 
 # Other
 ## References:
