@@ -18,7 +18,9 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-**Overall, the study transparently describes what is explanatory and what is confirmatory. For detailed summary, see below.**
+**Overall, the main manuscript follows the plan outlined in the preregistration. In the main manuscript, the authors transparently describe the deviations and clearly distinguish between explanatory and confirmatory analyses in their manuscript. Yet, it is unclear what was the rationale for extending the recruitment of teams and the general sample, which resulted in much larger targeted sample sizes? The other deviations are rather minor, as detailed below.**
+
+<!-- not sure about the random walk part Katja --> 
 
 **From the authors' response to reviewers: **
 *The pre-registered plan was previously submitted to NHB (NATHUMBEHAV-200410305PI) as an inquiry in April 2020; you can find this submitted plan here https://osf.io/7ekfm. Note, it is not a conventional pre-registration. We initially aimed to present the manuscript as a pre-registered report which we submitted to the journal. We subsequently officially pre-registered our methods on September 11, 2020 https://osf.io/u9x4m. The exact copy of this report is uploaded on OSF, but the time stamp suggests a later date (in the chaos of the first COVID lockdown, we failed to upload it to the OSF and subsequently shifted focus to the actual tournament, with reports on GitHub). We have now harmonized the GitHub and OSF parts of the project, so all aspects of the project can be found together. We also added the direct link to the pre-registered plan document, and moved the section about deviations from the pre-registration to the front of the revised methods section.*
@@ -40,7 +42,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 *We did not pre-register use of a lay crowd sample prior to collecting their forecasts in June 2020 (but we did pre-register this sample in early September, 2020, prior to cleaning or evaluating their data) and we deviated from the pre-registration in testing all individual predictors (e.g., team characteristics, model simplicity, number of parameters in the data model) simultaneously, instead of performing separate analyses. We explain the above in the relevant section of the revised methods section, and refer readers to the pre-registration plan we initially submitted to Nature Human Behavior for review in May 2020, and which is posted on the Open Science Framework: “Pre-registration and deviations. Forecasts of all participating teams along with their rationales were pre-registered on Open Science Framework (https://osf.io/u9x4m).* 
 
-*Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization 15 of the key dependent variable (MASE), operationalization of covariates and benchmarks (i.e., use of naive forecasting methods), along with the key analytic procedures (linear mixed model and contrasts being different forecasting approaches).* 
+*Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization of the key dependent variable (MASE), operationalization of covariates and benchmarks (i.e., use of naive forecasting methods), along with the key analytic procedures (linear mixed model and contrasts being different forecasting approaches).* 
 
 # Study Information
 ## Hypotheses
@@ -51,16 +53,19 @@ This study asks 3 main questions:
  1. How good are behavioral and social scientists at forecasting the social consequences of a COVID-19 pandemic? Following established procedures, we will examine the absolute percentage deviation for each forecast, and mean absolute scaled error (MASE) within and across forecasted time-points and social issues. MASE compares forecasted values against those obtained via a one-step “naïve forecast method.” It is independent of the scale of the data and can be used to compare forecasts across datasets with different scale, is asymptotically normal and easy to interpret, with lowest MASE scores indicating greatest forecasting accuracy. Critically, we will compare forecasting accuracy of scientists’ predictions against basic interpolation algorithms (e.g., moving average models with different lags). We will also compare the stability of model accuracy measured for different subsets of time, to assess the extent to which models might be accurate simply by chance.
 
 :::
+**Correct. Note, as transparently mentioned in the manuscript,** *due to scale differences between domains, [the authors] chose not to feature analyses concerning absolute percentage errors of each time point in the main paper.*
 
 ::: infobox
  2. Are some societal shifts in response to the COVID-19 pandemic easier to accurately forecast than others (e.g., is it easier to accurately forecast changes in prejudice toward outgroups vs. well-being vs. shifts in political preferences)? We will examine overall forecasting accuracy, and stability of forecasting accuracy, across domains above and beyond the naïve forecasting method using MASE.
 
 :::
+**Correct.**
 
 ::: infobox
  3. Are there characteristics (discipline, methodological approach to forecasts) of some teams that lead to more accurate forecasts in social science domains? Here, we focus on comparisons of forecasting approaches relying on a. pure expertise (but no data modeling); b. pure modeling (but no consideration of expert theories); c. hybrid approaches. We will explicitly examine the reasoning process, evaluating the role of confidence, and quality of forecast rationales (e.g., consideration of conditional factors and counterfactuals) for forecasting accuracy.
 
 ::: 
+**Correct.**
 
 # Design Plan
 ## Study type
@@ -76,7 +81,7 @@ The behavioral science forecasting collaborative is based on a common task frame
 
 Participants were given access to this data prior to participation and were asked to submit predictions for one or more domains (see https://predictions.uwaterloo.ca/datasets/).
 :::
-**In the main manuscript, there are 12 domains, the same as preregistered (just with different numbering). What is not reported are the precise months of historical data (January 2017 to March 2020) for Tournament 1. This information can be found below, where the domains are operationalized. However, we could not find information related to Tournament 2, such as** *"The participating teams received historical data [...] that spanned 45 months for Tournament 2 ( January 2017 to September 2020), which they could use to inform their forecasts for the future values of the same time series.*
+**In the main manuscript, there are 12 domains, consistent with the preregistration, though the numbering differs slightly. The exact months of historical data for Tournament 1 (January 2017 to March 2020) are provided below, where the domains are operationalized. However, we couldn't find specific information regarding the exact months of data for Tournament 2 in the preregistration.**
 
 Data for each domain was generated through the following processes:
 
@@ -120,11 +125,11 @@ https://osf.io/nwj35
 ::: 
 **Operationalization mostly aligns with that in the manuscript. Few minor remarks:** 
 
-**Implicit bias: this sentences was not part of the preprint operationalization (but is included in the main paper): *Implicit gender–career bias was measured using the IAT with category labels of ‘male’ and ‘female’ and attributes of ‘career’ and ‘family’.* Yet, the implicit gender–career bias is mentioned in the preregistration (see *Study design*). So this was probably just an oversight.** 
+**Implicit bias: the operationalization of the implicit gender–career bias is missing (probably just an oversight).** 
 
-**Explicit bias: The preprint has overlapping components with the manuscript but the operationalizations are not exactly the same. The operationalization in the manuscript is more  detailed, particularly with how explicit bias and relative scores are computed. For example, that explicit bias is measured on a seven-point scale, and it includes a thorough explanation of the calculation for relative bias scores (e.g., subtracting incongruent from congruent associations).**
+**Explicit bias: The preregistration has overlapping components with the manuscript but the operationalizations are not exactly the same. The operationalization in the manuscript is more  detailed, particularly with how explicit bias and relative scores are computed. For example, that explicit bias is measured on a seven-point scale, and it includes a thorough explanation of the calculation for relative bias scores (e.g., subtracting incongruent from congruent associations).**
 
-**Participant_Responses.csv is the file contains forecasts. Some values appear inconsistent; for example, for some participants, the odd and even values are the same, respectively.** 
+**Participant_Responses.csv contains forecasts. Some values appear inconsistent; for example, for some participants, the odd and even values are the same, respectively.** 
 
 - "R_2UgadrXE2OiyQIB	4/27/2020 3:59	TheMets	1,2,3,4,5,6,7,8,9,10	lifesat	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387	6.362	6.387"
  - "R_2UgadrXE2OiyQIB	4/27/2020 3:59	TheMets	1,2,3,4,5,6,7,8,9,10	iasian	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38	0.407	0.38"
@@ -186,7 +191,7 @@ Next, we zero-in on the COVID-19 pandemic as a conditional of interest given lin
 ### Counterfactuals.  
 Counterfactuals are hypothetical alternative historic events that would be thought to affect the forecast outcomes, if they were to occur. Participants will describe the key counterfactual events between December 2019 and April 2020 that they theorize would have led to different forecasts (e.g., U.S.-wide implementation of social distancing practices in February). Two independent coders will evaluate the distinctiveness of counterfactuals. If discrepancies arise, they will discuss individual cases with other members of the forecasting collaborative to make the final evaluation.
 :::
-**The description of the measured variable is almost identical to that provided in the manuscript. However, some information has been added to the manuscript. For example,** *interrater k=0.80* **or that** *In the primary analyses, we focus on the presence of counterfactuals (yes/no).*
+**The description of the measured variable is almost identical to that provided in the manuscript, except that the binary coding for the presence of counterfactuals (yes/no) is missing.**
 
 ::: infobox
 ### Team characteristics. 
@@ -245,7 +250,8 @@ Given that participants will receive both new data and a summary of diverse theo
 ::: infobox
 We will calculate accuracy scores for each domain, using MASE (mean absolute scale error).
 ::: 
-**The authors write in their manuscript that** *Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization 15 of the key dependent variable (MASE),...*. **If the authors are referring to this document (https://osf.io/7ekfm), we fail to see the outlined operationalization of MASE. In general, it is confusing for readers to search for the operationalization of a key index in another document.**
+
+**MASE is operationalized in the "Hypotheses" of the present preregistration, which is slightly confusing. Moreover, the authors write in their manuscript that** *Additionally, in an a priori specific document shared with the journal in May 2020, we outlined the operationalization of the key dependent variable (MASE),...*. 
 
 # Analysis Plan
 ## Confirmatory Analyses: Comparison of Forecasting Models
@@ -278,17 +284,24 @@ For each team, any domain that does not include 12 monthly predictions will will
 :::
 **The preregistered inference criteria make no reference to the Bayes factor, which is reported in the main manuscript.**
 **The data exclusion criteria in the main manuscript do not specify if and under what circumstances teams were contacted to confirm their predictions. However, according to the manuscript, the teams had the opportunity to confirm their entries upon submission.**
+**As to the "missing data", we fail to find any mention regarding handling of missing data in the main manuscript. The handling of missing data in the general sample is reported.**
 
 ## Exploratory analysis
 ::: infobox
 ### Exploratory Analyses: Comparison of Different Approaches/Teams 
 The main exploratory (two-tailed) analyses will compare MASE scores for the whole forecasted time series as well as percent of absolute error for each individual forecasted time point when using different forecasting approaches. To this end, we will fit a series of linear mixed effect models. For models evaluating overall accuracy of the forecasted model, we will use forecasting type (purely theoretical, purely data-driven and hybrid models), forecasting domain as predictors, with MASE scores nested within teams. Next, we will examine how the theory-free “extrapolation of time series” models compare in forecasting accuracy to models that rely on other model parameters and/or theoretical assumptions, by including this contrast between models and forecasting domain as predictors, with MASE scores nested within teams. For models evaluating accuracy of individual time points, we will use forecasting type (purely theoretical, purely data-driven and hybrid models), forecasting domain and time points as predictors, with absolute percent deviation scores nested within teams. 
+
 ::: infobox
 We will use equivalent analyses with team type and confidence (instead of forecasting type) as predictors. Further, we will examine whether presence of additional parameters (beyond time series data we provide) and counterfactuals significantly alters forecasting accuracy. First, in a series of linear mixed models similar to the one outlined above we will examine whether presence (dummy-coded yes/no) or number of considered additional parameters and counterfactuals moderate the forecasting accuracy (MASE scores for total accuracy / percent of absolute error for accuracy at specific time points).
 ::: 
+**The results of this analysis are reported in the supplementary Table 5.**
+
+
 ::: infobox
 Next, we will zero-in forecasts including COVID-19 virus trajectory as a conditional. For these forecasts, we will first estimate the forecasting accuracy of the COVID-19 trajectory by evaluating MASE scores for COVID-19 death against the actual number of deaths. We will use these conditional forecasting accuracy scores as a moderator in linear models evaluating accuracy of each of the targeted domain. We will further conduct simple slope analyses, evaluating the role of conditional forecasting accuracy for the accuracy of the forecast in targeted domains. Such analyses can reveal whether participants’ forecasting errors in targeted domains may be qualified by their accuracy in expectations for the virus trajectory. 
 :::
+**The results of this analysis are reported in the supplementary "Were forecasting teams wrong for the right reasons?"**
+
 ::: infobox
 Additionally, expert forecasts will be compared to the "wisdom of the crowds" standard by comparing the accuracy of expert forecasts to those of lay forecasts (aiming N = 200 American residents for each of the five domains - racism, gender bias, Asian-American bias, politcs, well-being; gathered at the same time via Prolific, who followed a very similar procedure completed by forecasting teams) and contrasting expertise and forecasting domain as predictors, with MASE scores nested within teams. Lay forecasts will additionally be fit to a series of linear mixed models, with forecasting domain as predictors and MASE scores for each participant.
 ::: 
