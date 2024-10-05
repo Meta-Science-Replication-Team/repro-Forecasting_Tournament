@@ -53,19 +53,19 @@ This study asks 3 main questions:
  1. How good are behavioral and social scientists at forecasting the social consequences of a COVID-19 pandemic? Following established procedures, we will examine the absolute percentage deviation for each forecast, and mean absolute scaled error (MASE) within and across forecasted time-points and social issues. MASE compares forecasted values against those obtained via a one-step “naïve forecast method.” It is independent of the scale of the data and can be used to compare forecasts across datasets with different scale, is asymptotically normal and easy to interpret, with lowest MASE scores indicating greatest forecasting accuracy. Critically, we will compare forecasting accuracy of scientists’ predictions against basic interpolation algorithms (e.g., moving average models with different lags). We will also compare the stability of model accuracy measured for different subsets of time, to assess the extent to which models might be accurate simply by chance.
 
 :::
-**Correct. Note, as transparently mentioned in the manuscript,** *due to scale differences between domains, [the authors] chose not to feature analyses concerning absolute percentage errors of each time point in the main paper.*
+**This part of the preregistration aligns with the main manuscript. Note, as transparently mentioned in the manuscript,** *due to scale differences between domains, [the authors] chose not to feature analyses concerning absolute percentage errors of each time point in the main paper.*
 
 ::: infobox
  2. Are some societal shifts in response to the COVID-19 pandemic easier to accurately forecast than others (e.g., is it easier to accurately forecast changes in prejudice toward outgroups vs. well-being vs. shifts in political preferences)? We will examine overall forecasting accuracy, and stability of forecasting accuracy, across domains above and beyond the naïve forecasting method using MASE.
 
 :::
-**Correct.**
+**This part of the preregistration aligns with the main manuscript.**
 
 ::: infobox
  3. Are there characteristics (discipline, methodological approach to forecasts) of some teams that lead to more accurate forecasts in social science domains? Here, we focus on comparisons of forecasting approaches relying on a. pure expertise (but no data modeling); b. pure modeling (but no consideration of expert theories); c. hybrid approaches. We will explicitly examine the reasoning process, evaluating the role of confidence, and quality of forecast rationales (e.g., consideration of conditional factors and counterfactuals) for forecasting accuracy.
 
 ::: 
-**Correct.**
+**This part of the preregistration aligns with the main manuscript.**
 
 # Design Plan
 ## Study type
@@ -164,7 +164,7 @@ Using GPower 3.1, we estimated that for a typical effect size for the forecasted
 Participants were recruited over a 1 month period, with the intent of extending the deadline until the 40 team minimum was reached.
 :::
 
-**Correct, however, it is unclear how many teams had been recruited by May, when the first predictions started. Was the rationale for extending recruitment due to not having enough teams by the end of April, leading to 46 teams joining between May and mid-June? Teams that joined in mid-June 2020 likely had to submit predictions for May 2020 retrospectively and had more information compared to teams that submitted by the end of April. This raises further confusion.**
+**This part of the preregistration aligns with the main manuscript; however, it is unclear how many teams had been recruited by May, when the first predictions started. Was the rationale for extending recruitment due to not having enough teams by the end of April, leading to 46 teams joining between May and mid-June? Teams that joined in mid-June 2020 likely had to submit predictions for May 2020 retrospectively and had more information compared to teams that submitted by the end of April. This raises further confusion.**
 **Further, the final sample size is double the preregistered sample size. It would be of interest to know whether the planned sample size would have yield the same results**.
 
 # Variables
@@ -245,6 +245,7 @@ Given that participants will receive both new data and a summary of diverse theo
  3. consideration of other external events. 
 
 ::: 
+**This part of the preregistration aligns with the main manuscript**.
 
 ## Indices
 ::: infobox
@@ -290,6 +291,9 @@ For each team, any domain that does not include 12 monthly predictions will will
 ::: infobox
 ### Exploratory Analyses: Comparison of Different Approaches/Teams 
 The main exploratory (two-tailed) analyses will compare MASE scores for the whole forecasted time series as well as percent of absolute error for each individual forecasted time point when using different forecasting approaches. To this end, we will fit a series of linear mixed effect models. For models evaluating overall accuracy of the forecasted model, we will use forecasting type (purely theoretical, purely data-driven and hybrid models), forecasting domain as predictors, with MASE scores nested within teams. Next, we will examine how the theory-free “extrapolation of time series” models compare in forecasting accuracy to models that rely on other model parameters and/or theoretical assumptions, by including this contrast between models and forecasting domain as predictors, with MASE scores nested within teams. For models evaluating accuracy of individual time points, we will use forecasting type (purely theoretical, purely data-driven and hybrid models), forecasting domain and time points as predictors, with absolute percent deviation scores nested within teams. 
+::: 
+
+**This part of the preregistration aligns with the main manuscript.**
 
 ::: infobox
 We will use equivalent analyses with team type and confidence (instead of forecasting type) as predictors. Further, we will examine whether presence of additional parameters (beyond time series data we provide) and counterfactuals significantly alters forecasting accuracy. First, in a series of linear mixed models similar to the one outlined above we will examine whether presence (dummy-coded yes/no) or number of considered additional parameters and counterfactuals moderate the forecasting accuracy (MASE scores for total accuracy / percent of absolute error for accuracy at specific time points).
