@@ -42,12 +42,6 @@ options(max.print = 20000, scipen = 1000)
 
 ```
 
-```{r setup working directory}
-
-setwd("~/GitHub/Forecasting-Tournament") #igor's working directory
-
-```
-
 ```{r Import Data}
 
 dat <- read.csv("dat_for_analyses.csv", stringsAsFactors = FALSE)

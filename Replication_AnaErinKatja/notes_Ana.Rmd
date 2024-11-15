@@ -1,11 +1,11 @@
 ---
-title: "Notes and screaming in the void"
+title: "Report draft"
 author: "Ana Martinovici"
 date: "Last compiled on `r Sys.time()`"
 output: 
     bookdown::html_document2:
         toc: true
-        css: style.css
+        css: !expr here::here("Replication_AnaErinKatja", "style.css")
         toc_float: 
             collapsed: false
         number_sections: true
@@ -15,19 +15,169 @@ editor_options:
   chunk_output_type: console
 ---
 
-This is the doc where I take notes as I read the paper or work on reproducing the results.
+For the original version of our pre-re-analysis plan, see [Link to the original re-analysis plan](https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament/blob/c184756586011cb0b9f8283a771e6a44db74861c/Replication_AnaErinKatja/replication_report.Rmd). In this report, original wording of our re-analysis plan is included in highlighted infoboxes.
 
-# Notes on the paper
+::: infobox
+The article aims to answer "How well can social scientists predict societal change, and what processes underlie their predictions?" (abstract, page 484). Our robustness reproduction will focus on a subset of the analyses reported in the paper. Specifically, we will focus on results and claims reported in the section "How accurate were behavioural and social scientists at forecasting?" (pages 485-486). For this section, we plan to:
+:::
 
-The core RQ of the paper is "How well can social scientists predict societal change, and what processes underlie their predictions?".
+# Computational Reproducibility
 
-To check:
+::: infobox
+1.  check computational reproducibility using the data and code provided by the authors. We expect that we have to make changes in order to execute the analysis code, and we aim to many as few changes as possible.
 
-- do people predict "change" or do they predict the level?
+We plan to spend at most 12 hours on this step (3 sessions of max 4 hours, spread over several days). Within the team we have extensive experience with R, statistics, and good practices for computational reproducibility. We think that 12 hours of work is a very high amount of effort, and ideally readers should be able to reproduce results in a much shorter amount of time (\<2 hours). We will report the amount of time that we spend and the changes we have to make to the existing code.
+:::
 
-# Plan
+Summary: The results were not computationally reproducible within the planned time. Despite spending more time than initially planned (aprox. 20 hours for Ana), we were unable to reproduce the results. This is due to how data, code, and instructions are provided by the authors in the reproducibility package. We list below specific issues and then recommendations for how to address them:
 
-- check the match between the preregistration plan of the paper (submitted by the authors) and the final paper
+## Issues
+
+-   the README file in the repository provides incomplete information about the content of the repo.
+
+The repository contains 124 files: 44 in the root directory and the rest in one of 5 subdirectories. Only a subset are mentioned in the README file. Only some of the files that seem to contain data (based on filename) are described in the README file (e.g., `Wave1+2data.csv`, `Wave1+2demographics.csv`, `contrast1.csv` are not described)
+
+-   some files are duplicates (i.e., have the same name and same content). It is unclear why and which one should be used. For example: `BenchmarkSimulations.R` is both in the root directory and the `sim` directory.
+
+-   some files have the same name yet different content
+
+`dat_long.csv` is both in the root directory (V1) and the `Data Cleaning` directory (V2). The README file states: *"`dat_long.csv` contains a file with predictions of forecasting teams in a long format, used for plotting estimates of each team."* I have checked, and the two files do not have the same content. V1 has 26960 observations and 144 variables, while V2 has 27032 observations and 134 variables. The two datasets share 131 variables. I checked if there are differences in the observations for these shared 131 variables: of the 26960 observations in V1, 477 observations match V2. Given the size (observations and variables) of these datasets, and the limited information available in the repo, it is not feasible to conduct further checks. Thus, we cannot state if the mismatch is due to a minor issue (e.g., numerical precision) or major issues (e.g., different values used in the analysis than the ones provided by participants).
+
+`Wave 1+2 Descriptives.Rmd` saves data to `dat_long.csv`:
+
+```{r}
+file_name <- here::here("Wave 1+2 Descriptives.Rmd") 
+start_line <- 239
+end_line <- 240
+knitr::read_chunk(path = file_name, labels = "my-query-params", from = start_line, to = end_line) 
+ 
+file_in_repo <- stringr::str_sub(file_name, start = stringr::str_locate(file_name, "/repro")[1, "start"]) 
+  
+```
+
+Specifically, lines `r start_line`:`r end_line` from `r file_in_repo`:
+
+```{r, my-query-params, eval = FALSE, echo = TRUE}
+```
+
+It is not immediately clear which of the two files, if any, is generated by the Rmd - this depends on the knit directory settings of the user who last knitted this file. The Rmd file contains code that sets a working directory to `setwd("~/GitHub/Forecasting-Tournament") #igor's working directory`. Based on this, it is more likely that the csv file is saved in the root directory. After commenting out the `setwd` command, I tried to knit the file. The file could then be knit without error and two files were generated `dat_for_analyses.csv` and `dat_long.csv`. I will refer to the `dat_long.csv` generated after I knitted the Rmd as V3. V3 has 26960 observations (same as V1) and 138 variables (different from either V1 or V2). Thus, neither of the two files was generated by `Wave 1+2 Descriptives.Rmd`. It is thus unclear how the dataset that contains predictions of forecasting teams was generated.
+
+This is a major issue that severely reduces usefulness of further checks of computational reproducibility. Even if we were to assume that the results in the paper can be reproduced using one of the two data files but not using the other. Without knowing which of the datasets is the correct one to use, we wouldn't be able to make any meaningful statements about reproducing the results.
+
+We also noticed that the shared datasets contain information (e.g., email addresses of participants, IPAddresses, and geolocation data) that probably should not be made publicly available.
+
+-   it is unclear which file needs to be used to produce results reported in the paper. There seem to be 3 options: 2 based on the names of the files and a third based on the information in the README file:
+
+    -   `Wave 1+2 Analyses FINAL FOR MANUSCRIPT.Rmd`
+
+The file cannot be knit without error, even after installing all packages and commenting out the `setwd` line of code. "Quitting from lines 1149-1372 [Phases 1 and 2 along with sims] (Wave-1+2-Analyses-FINAL-FOR-MANUSCRIPT.Rmd)". I have checked these lines of code, and there is a mistake in how arguments to the `stan_lmer` function are provided. A parenthesis is missing, which means that this Rmd file was not knitted by the authors, so probably this is not the file that was used to generate the results. Trying to knit the file, overwrote 28 of the 29 files in `Wave-1+2-Analyses-FINAL-FOR-MANUSCRIPT_files\figure-html`. These are all image files for plots. Some of these plots are substantively different (i.e., the original version shared by authors is different from what is generated when knitting the Rmd file). These differences are important (e.g., different number of variables being plotted) and cannot be explained by differences in resolution or other display settings between the device of the authors and the device of the user trying to reproduce results. In conclusion, this version of the file could not have been used to generate the results in the paper.
+
+-   `Wave 1+2 Analyses update.Rmd`
+
+Next, I tried to knit this file. After commenting out the `setwd` line, the file could not be knit without error. I summarise below the steps I took to fix these errors.
+
+"Quitting from lines 747-907 [Phases 1 and 2 along with sims] (Wave-1+2-Analyses-update.Rmd) Error in `initializePtr()`: ! function 'cholmod_factor_ldetA' not provided by package 'Matrix'"
+
+This seems to be due to an issue related to the Matrix version (<https://stackoverflow.com/questions/77481539/error-in-initializeptr-function-cholmod-factor-ldeta-not-provided-by-pack>). I have followed the suggestion and removed the Matrix package and then install the binary version. "Warning in install.packages : package ‘Matrix’ is not available for this version of R" My version of R is 4.3.2 Unclear which version of R and R packages were used by the authors, so it is not feasible to try and guess it by trial and error (the analyses files load more than 20 packages - unclear how many of these are in fact used). I have followed the second suggestion in the Stackoverflow post and uninstalled `lme4` and then installed it again from source. "Quitting from lines 1119-1156 [unnamed-chunk-3] (Wave-1+2-Analyses-update.Rmd) Error: ! object 'match_fonts' is not exported by 'namespace:systemfonts'"
+
+This is most likely related to using `newggslopegraph` from the package `CGPfunctions`. I commented out the call of this function and tried to knit again.
+
+"Quitting from lines 1258-1303 [inaccuracy on odd and even month - stability of inaccuracy] (Wave-1+2-Analyses-update.Rmd) Error in `parse()`: ! <text>:5:71: unexpected '::'" related to `dplyr::dplyr::select`. This version of the file could not have been knitted without error on the device of the authors. I fixed the mistake (two instances in the same code chunk) and tried to knit again.
+
+The file makes uses of R packages that are not listed at the start of the file. This means that knitting stops multiple times due to missing packages. Ideally, the list of necessary packages and their version would be shared. The file contains 162 instances where `lmer` was used. Unclear which of these 162 estimated models are reported in the paper.
+
+"Quitting from lines 1511-1593 [unnamed-chunk-6] (Wave-1+2-Analyses-update.Rmd) Error in `assert_package()`: ! `quick_docx` requires the "flextable" package. To install, type: install.packages("flextable")"
+
+Despite following the instruction in the error message and installing the package, the file cannot be knit without error. I have then executed all code before this chunk and then tried to execute the code within the chunk line by line to figure out which line of code generates the error. After executing the code above, the environment has 124 objects. This is only half way through the code. The very large number of objects makes it error prone - easy to make one spelling error and get other results than intended. I commented out the lines of code that produced the previous error and tried to knit again.
+
+"Quitting from lines 1692-1856 [SUPPLEMENTARY PHASE 1 analyses] (Wave-1+2-Analyses-update.Rmd) Error in `lme4::lFormula()`: ! 0 (non-NA) cases" This error seems to suggest there is a problem with the data used for analysis. After one hour of trying to knit the file, it is unfortunately not feasible to go through the code line by line and try to figure out what the problem is.
+
+Up to line 1692 where the knitting stopped, this Rmd generates a few csv files that are saved in the repo:
+
+-   wave1.scores.csv
+-   wave2.scores.csv
+-   final.results.csv
+-   top.t1.csv
+-   medianMASE.t1.csv
+-   top.t2.csv
+-   medianMASE.t2.csv
+-   contrast1.csv
+-   contrast2.csv
+
+I checked and the first 7 are reproduced. The last 2 are not.
+
+-   The third potential file to produce results is based on the README file
+
+This points to a previous version of `Wave 1+2 Analyses FINAL FOR MANUSCRIPT.Rmd` as the one used to generate the results. The code in this version is different from the most recent one in the repo.
+
+In summary, the Rmd files were probably not knited by the authors. This is based on the fact that multiple Rmd files contain code that generates errors that would not allow knitting on any device. For example, `Wave1+2_Merge_2021-07-14.Rmd` has duplicate chunk labels ("Duplicate chunk label 'add historic data to data frame'"). Going through all the files, finding and then fixing all errors is not feasible. I estimate that it could take several weeks of full time work, and it is uncertain if in the end the results will be reproduced. There is a very low probability of computational reproducibility, based on how the code and files are structured. There doesn't seem to be a consistent coding style used, which increases the probability of making mistakes and lowers the probability of detecting these mistakes. long lines of code that span multiple lines on screen or that require horizontal scrolling, inconsistent spacing between operators and objects, mix of tidyverse (dplyr) and R base functions to process data, partial matching, accessing observations by using manually input row indices rather than filtering on explicit criteria (`# baselines for participant phase 1 submissions baseline_1 <- dat_hist[nrow(dat_hist) - 12, 1:ncol(dat_hist)]`), code repetition and manual changes rather than using functions, no testing. All these issues increase the probability of mistakes in the code.
+
+## Recommendations
+
+The current structure and content of the repo show a variety of error prone practices. To clarify, error prone doesn’t mean that errors are guaranteed to exist in the code. It simply means that the user needs to put in a lot more effort to avoid mistakes. We know that people have limited time, attention, and working memory. To prevent mistakes, it is best to use practices that take these limits into account. The principle is called defensive programing and is similar to the idea of defensive driving. The following recommendations aim to lower the probability of mistakes in the code, and make it easier to notice mistakes when they appear. 
+
+1.  Use a consistent code style
+
+> spa cinga ndpun ctuationareimp ortantbo thwh enwritingtex tan dwhenwritingcode
+
+> Spacing and punctuation are important both when writing text and when writing code.
+
+The two lines of text above contain the same letters. Yet, one can be read much easier, while the other could easily be mistaken for random characters. Writing code in a way that makes it easier for another person to read it lowers the probability of mistakes and increases the chances that someone else can verify the results. The current version of the code in the repo would benefit from use of spacing and indentation to improve readability. For specific suggestions and additional examples, see the `tidyverse` style guide (https://style.tidyverse.org/) or any other similar resource on style guides for programming. 
+
+2. Use R projects and the `here` package
+
+See: https://www.tidyverse.org/blog/2017/12/workflow-vs-script/
+
+3. The repo should contain ALL the files and NOTHING BUT the files needed to reproduce the results
+
+It is easy to see why including ALL the files is needed. Including NOTHING BUT the files that are needed is an error reduction measure. The more unnecessary files there are, the more difficult it is to keep track of which ones should be used, and the more likely it is to make mistakes.
+
+4. R scripts and Rmd files should contain ALL the code and NOTHING BUT the code needed for a specific goal
+
+For example, `Wave 1+2 descriptives.Rmd` contains lines of code that are commented out. If something is not needed, then it is best removed. This way, fewer lines need to be checked for correctness and those lines can more easily be read and understood compared to when presented in a cluttered file.
+
+5. If you use Rmd, then `knit` the file to ensure that it can be knitted without error. 
+
+While developing the code, if you want to test a minor change (e.g., changing labels in a plot), then you might execute the code and check the output in the console (i.e., without knitting the file). If you do this, then first restart the R session and then execute all the code before the section you are working on before executing the lines of code that you are trying to change. When you are done with all changes, knit the file and make sure it knits without error. 
+
+6. Share a version of the data that is as close as possible to the raw data, and scripts that process it.
+
+The raw dataset might contain information that cannot be publicly shared due to ethical and legal considerations. Depending on the specifics of each situation, this type of information should be pseudonimized, removed, or otherwise transformed before publicly sharing a dataset. 
 
 
+For additional recommendations see:
+
+Bryan, J. (2018). Excuse Me, Do You Have a Moment to Talk About Version Control? The American Statistician, 72(1), 20–27. https://doi.org/10.1080/00031305.2017.1399928
+
+Ellis, S. E., & Leek, J. T. (2018). How to Share Data for Collaboration. The American Statistician, 72(1), 53–57. https://doi.org/10.1080/00031305.2017.1375987
+
+Thomas, D., & Hunt, A. (2019). The Pragmatic Programmer: your journey to mastery. Addison-Wesley Professional.
+
+Wilson G, Bryan J, Cranston K, Kitzes J, Nederbragt L, Teal TK (2017) Good enough practices in scientific computing. PLoS Comput Biol 13(6): e1005510. https://doi.org/10.1371/journal.pcbi.1005510
+
+Wilson G, Aruliah DA, Brown CT, Chue Hong NP, Davis M, Guy RT, et al. (2014) Best Practices for Scientific Computing. PLoS Biol 12(1): e1001745. https://doi.org/10.1371/journal.pbio.1001745
+
+# Preregistration
+
+::: infobox
+2.  check the match between the preregistration plan of the paper (submitted by the authors) and the final paper
+:::
+
+# Robustness 1: MAPE instead of MASE
+
+::: infobox
+3.  check robustness reproducibility by using a different operationalization of forecasting accuracy (i.e., the DV). Instead of MASE, we will use MAPE (mean absolute percent error) and use random effects for domain.
+:::
+
+# Robustness 2: sensitivity to forecast size
+
+::: infobox
+4.  check robustness reproducibility by examining how sensitive the results are when accounting for forecast size (i.e., the number of claims that participating teams self-selected into submitting).
+:::
+
+# Robustness 3: Comparison to judgments of learning literature
+
+::: infobox
+5.  perform a robustness comparison to judgements of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ real answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
+:::
 
