@@ -1,0 +1,323 @@
+---
+title: "JOL Extension"
+author: "Erin Buchanan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The Plan
+
+Perform a robustness comparison to judgments of learning literature. We will calculate bias and sensitivity of the forecasting for each team by domain combination, by using a regression equation of `actual answer ~ given answer` and then extracting estimated intercept (bias) and slope (sensitivity) for each team and domain. Then, we can estimate an MLM (multilevel model) of `bias ~ 1 + (1|domain)` to determine if bias is different from zero and an MLM of `sensitivity ~ 1 + (1|domain)` to determine if sensitivity is different from zero. If these are different from zero, the forecasts are "biased" and "sensitive". Bias is traditionally .4-.6 on a standardized scale range - any values outside this range would be considered different from traditional results. Sensitivity is traditionally .2 to .4 on a standardized scale range - any values outside this range would be considered different from traditional results.
+
+Perfect predictions would predict actual data with a slope of 1 and intercept of 0. Bias is considered the upward or downward difference from an intercept - generally, we have an overestimation bias found in the traditional Dunning-Kruger effect and other students of judgments of learning and numerical judgments of relatedness. Sensitivity is our ability judge the differences in effect size across time in this study. Sensitivity close to zero means no ability to predict effect size, while largest sensitivities relate to better ability to judge the change across time. 
+
+## Libraries
+
+```{r}
+library(rio)
+library(dplyr)
+library(nlme)
+library(tidyr)
+library(easystats)
+library(ggplot2)
+```
+
+## Data
+
+To complete this analysis, we first looked for the appropriate author provided data files to get the *actual* answer and the team *predicted* answer. Given the file `Wave 1+2 descriptives.Rmd`:
+
+- the actual answer is in the `historical_data.csv` and is the column `Actual_Score`. 
+- the predicted answer is in the `Wave1+2data.csv` and is in the `Month` columns. This dataset represents the rawest form of data we could find - as noted later, investigating the study methods showed that teams uploaded excel files as their answers for each of the topic areas. This data could not be found. We also investigated various different forms of the wave 1 and 2 data (as there are multiple files labeled with wave 1 and wave 2), and the problems mentioned below persist. 
+
+```{r}
+# actual / real answer ... historical data by month 
+DF_actual <- import("../historical_data.csv") %>% 
+	select(-V1) %>% 
+	pivot_longer(cols = -Month, 
+			 names_to = "domain",
+			 values_to = "Actual_Score") %>% 
+	na.omit()
+	
+
+# predicted answer ... month variables
+DF_predicted_1 <- import("../Wave1+2data.csv") %>%
+	filter(phase == 1) %>% 
+	select(team_name, domain, phase, Month.1:Month.12)
+
+# kind of unclear what scores wave 2 were compared to but guess is 1-12 since no historical data is there for 7-18 we assume that's just the time from start of the study
+DF_predicted_2 <- import("../Wave1+2data.csv") %>%
+	filter(phase == 2) %>% 
+	select(team_name, domain, phase, Month.7:Month.18) %>% 
+	rename(Month.12 = Month.18,
+		  Month.11 = Month.17,
+		  Month.10 = Month.16,
+		  Month.9 = Month.15,
+		  Month.8 = Month.14,
+		  Month.7 = Month.13,
+		  Month.6 = Month.12,
+		  Month.5 = Month.11,
+		  Month.4 = Month.10,
+		  Month.3 = Month.9,
+		  Month.2 = Month.8,
+		  Month.1 = Month.7)
+	
+DF_predicted <- bind_rows(DF_predicted_1, DF_predicted_2) %>% 	
+	pivot_longer(cols = c(Month.1:Month.12),
+			 names_to = "Month", 
+			 values_to = "Predicted_Score") %>% 
+	mutate(Month = gsub("Month.", "", Month),
+		 Month = as.integer(Month))
+
+# merge together
+DF_long <- DF_predicted %>% 
+	left_join(
+		DF_actual, 
+		by = c("domain", "Month")
+	) %>% 
+	na.omit()
+
+head(DF_long)
+```
+
+To calculate bias and sensitivity in the ranges we predicted, we needed to scale the data so that they were always in the same range from 0 to 1. After examining the min/max and the methods, we rescaled the data dividing by the max of the range or reversing the scale when necessary. 
+
+```{r}
+# rescale
+DF_long %>% 
+	group_by(domain) %>% 
+	summarize(min = min(Actual_Score),
+		    max = max(Actual_Score),
+		    min_p = min(Predicted_Score),
+		    max_p = max(Predicted_Score))
+
+DF_long <- DF_long %>% 
+	mutate(Actual_Score = 
+		 	ifelse(
+		 		domain == "ideoldem" | domain == "ideolrep" | domain == "polar", 
+		 		Actual_Score / 100, 
+		 		Actual_Score), 
+		 Predicted_Score = 
+		 	ifelse(
+		 		domain == "ideoldem" | domain == "ideolrep" | domain == "polar", 
+		 		Predicted_Score / 100, 
+		 		Predicted_Score), 
+		 Actual_Score = 
+		 	ifelse(
+		 		domain == "negaffect" | domain == "posaffect" | domain == "lifesat", 
+		 		Actual_Score / 7, 
+		 		Actual_Score), 
+		 Predicted_Score = 
+		 	ifelse(
+		 		domain == "negaffect" | domain == "posaffect" | domain == "lifesat", 
+		 		Predicted_Score / 7, 
+		 		Predicted_Score),
+		 Actual_Score = ifelse(
+		 	domain == "eafric" | domain == "easian" | domain == "posaffect",
+		 	-Actual_Score,
+		 	Actual_Score
+		 ),
+		 Predicted_Score = ifelse(
+		 	domain == "eafric" | domain == "easian" | domain == "posaffect",
+		 	-Predicted_Score,
+		 	Predicted_Score
+		 )
+	)
+
+head(DF_long)
+```
+
+## Analysis: Calculate Bias and Sensitivity
+
+In this section, we calculated the bias and sensitivity as follows:
+
+- Create a separate calculation for each team and domain and phase 
+- Use the predicted score to predict the actual score 
+- Save the team, domain, bias (intercept), and sensitivity (slope) in a dataframe. 
+
+```{r}
+store_results <- list()
+iter <- 1
+for (i in unique(DF_long$team_name)) {
+	for (q in unique(DF_long$domain)){
+		for (r in 1:2){
+			# cat(i)
+			temp <- DF_long %>% 
+				filter(team_name == i) %>% 
+				filter(domain == q) %>% 
+				filter(phase == r)
+			
+			if (nrow(temp) > 0){
+			temp.model <- lm(
+				Actual_Score ~ Predicted_Score, 
+				data = temp
+			)
+			store_results[[iter]] <- data.frame(
+				team = i,
+				domain = q, 
+				bias = coef(temp.model)[1],
+				sensitivity = coef(temp.model)[2],
+				n_est = nrow(temp),
+				phase = r
+			)
+			iter <- iter + 1
+			}
+		}
+	}
+}
+```
+
+## Analysis: Analyze
+
+Next, we calculated the overall bias and sensitivity using a multilevel model controlling for domain as a random intercept. At first glance the results for the average bias intercept appeared within the normal range (~ .40). The average sensitivity slope appeared unusual (~ -.50), as generally these are not negative. 
+
+We also investigated the values - there are multiple sensitivity values that were calculated as *NA*, which occurs when there is no variance in estimates (and therefore, slope is technically infinity). We excluded those values for this analysis. 
+
+```{r}
+DF_results <- bind_rows(store_results) 
+
+nrow(DF_results) 
+
+DF_results <- DF_results %>% 
+	na.omit()
+
+nrow(DF_results) 
+
+model.bias <- lme(
+	fixed = bias ~ 1, 
+	data = DF_results,
+	random = list(~1|domain)
+	)
+
+summary(model.bias)
+
+model.sensitivity <- lme(
+	fixed = sensitivity ~ 1, 
+	data = DF_results,
+	random = list(~1|domain),
+	na.action = "na.omit"
+	)
+
+summary(model.sensitivity)
+```
+
+To investigate further, we examined the values for bias and sensitivity using `ggplot2`. Both graphs show extremely unusual scores for bias and sensitivity - remember that the data is scaled to 0-1 for each of the scales to ensure the data is in the same range as normal judgment of learning results. Therefore, finding bias/sensitivity results that are over 1 to 2 points is extremely odd - and many of these scores well over 50 to 100 times that amount. 
+
+```{r}
+ggplot(DF_results, aes(sensitivity, bias, color = domain)) + 
+	geom_point() + 
+	theme_classic() + 
+	xlab("Sensitivity") + 
+	ylab("Bias") + 
+	theme(legend.position = "none")
+
+ggplot(DF_results, aes(sensitivity, bias, color = team)) + 
+	geom_point() + 
+	theme_classic() + 
+	facet_wrap(~domain) + 
+	xlab("Sensitivity") + 
+	ylab("Bias") + 
+	theme(legend.position = "none")
+```
+
+Therefore, we decided to examine the data to determine if this result is due to the task or some other issue in the data. 
+
+## Review Raw Scores
+
+One thing we noticed by reviewing the data for the very high bias/sensitivity teams was that the data repeated the exact same numbers for odd months and even months with a high level of precision. For example:
+
+```{r}
+DF_predicted %>% 
+	filter(team_name == "TheMets")
+```
+
+The odds of teams entering the same scores, for all their estimates, for odd months and then separately for even months seems very low. To investigate this problem on a larger scale, we calculated the correlation matrix of each team's scores. We then grabbed the lower triangle of the correlations (i.e., all unique pairwise correlations that do not include the month correlated with itself). Any team with a perfect correlation between monthly estimates, we marked as suspicious. 
+
+```{r}
+teams <- unique(DF_predicted$team_name)
+
+correl_matrix <- list()
+correl_num <- list()
+for (team in teams){
+	for (phase_num in 1:2){
+		temp <- DF_predicted %>% 
+			filter(team_name == team) %>% 
+			filter(phase == phase_num) %>% 
+			pivot_wider(id_cols = c(team_name, domain), 
+					names_from = Month,
+					values_from = Predicted_Score) %>% 
+			select(-team_name, -domain)
+  
+		  if (nrow(temp) > 2){
+		  	
+		  correl_matrix[[paste0(team,"_", phase_num)]] <- temp %>% 
+		    reframe(correl = cor(., use = "pairwise.complete.obs")) %>% 
+		  	as.matrix()
+  
+		  lower.triangle <- correl_matrix[[paste0(team,"_", phase_num)]][lower.tri(as.matrix(correl_matrix[[paste0(team,"_", phase_num)]]), diag = FALSE)]
+  
+		 correl_num[[paste0(team,"_", phase_num)]] <- sum(lower.triangle == 1, na.rm = TRUE)
+		
+	}
+  
+  }
+  
+}
+```
+
+Should not have perfectly correlated monthly data: 
+
+```{r}
+correl_total <- bind_rows(correl_num) %>% 
+  pivot_longer(cols = everything()) %>% 
+  filter(value > 0)
+
+nrow(correl_total) # number of teams/phases that have odd correlations
+
+length(correl_num) # total number of possible team/phase combos
+```
+
+Therefore, `r round(nrow(correl_total)/length(correl_num)*100,2)`% of team and phase combinations are potentially odd data.  
+
+No variability in scores:
+
+Another issue is that some teams' scores are simply the same score repeated for each month - we don't know if that's what they entered, but that data should be at least examined because it does not appropriately complete the required task. 
+
+```{r}
+teams <- unique(DF_predicted$team_name)
+no_variable <- list()
+for (team in teams){
+	for (phase_num in 1:2){
+		temp <- DF_predicted %>% 
+			filter(team_name == team) %>% 
+			filter(phase == phase_num) %>% 
+			pivot_wider(id_cols = c(team_name, domain), 
+					names_from = Month,
+					values_from = Predicted_Score) %>% 
+			select(-team_name)
+  
+		  	no_variable[[paste0(team, "_", phase_num)]] <- data.frame(
+		  		sd = apply(temp %>% select(-domain), 1, sd, na.rm = T),
+		  		domain = temp$domain,
+		  		team = team, 
+		  		phase = phase_num
+		  	)
+  
+  }
+  
+}
+
+sd_issues <- bind_rows(no_variable)
+
+nrow(sd_issues) # total number of teams by domains by phase
+
+nrow(sd_issues %>% filter(sd == 0)) # number of problematic estimates 
+
+```
+
+Therefore, `r round(nrow(sd_issues %>% filter(sd == 0))/nrow(sd_issues)*100,2)`% of team and phase combinations are potentially odd data.  
+
+Given the potential issues with the data, we did not continue with the judgment of learning analysis. It was unclear how to interpret the results given the questions about the data. 
