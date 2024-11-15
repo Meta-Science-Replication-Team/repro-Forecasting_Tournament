@@ -11,7 +11,7 @@
 
 <meta name="author" content="Erin Buchanan" />
 
-<meta name="date" content="2024-09-19" />
+<meta name="date" content="2024-11-15" />
 
 <title>JOL Extension</title>
 
@@ -352,7 +352,7 @@ display: none;
 
 <h1 class="title toc-ignore">JOL Extension</h1>
 <h4 class="author">Erin Buchanan</h4>
-<h4 class="date">2024-09-19</h4>
+<h4 class="date">2024-11-15</h4>
 
 </div>
 
@@ -404,14 +404,12 @@ library(dplyr)</code></pre>
 ##     collapse</code></pre>
 <pre class="r"><code>library(tidyr)
 library(easystats)</code></pre>
-<pre><code>## # Attaching packages: easystats 0.7.3 (red = needs update)
-## ✖ bayestestR  0.13.2   ✔ correlation 0.8.5 
-## ✖ datawizard  0.12.2   ✔ effectsize  0.8.9 
-## ✖ insight     0.20.2   ✔ modelbased  0.8.8 
-## ✖ performance 0.12.2   ✖ parameters  0.22.1
-## ✔ report      0.5.9    ✖ see         0.8.5 
-## 
-## Restart the R-Session and update packages with `easystats::easystats_update()`.</code></pre>
+<pre><code>## # Attaching packages: easystats 0.7.3
+## ✔ bayestestR  0.15.0   ✔ correlation 0.8.6 
+## ✔ datawizard  0.13.0   ✔ effectsize  0.8.9 
+## ✔ insight     0.20.5   ✔ modelbased  0.8.9 
+## ✔ performance 0.12.4   ✔ parameters  0.23.0
+## ✔ report      0.5.9    ✔ see         0.9.0</code></pre>
 <pre class="r"><code>library(ggplot2)</code></pre>
 </div>
 <div id="data" class="section level2">
@@ -433,7 +431,7 @@ files labeled with wave 1 and wave 2), and the problems mentioned below
 persist.</li>
 </ul>
 <pre class="r"><code># actual / real answer ... historical data by month 
-DF_actual &lt;- import(&quot;../historical_data.csv&quot;) %&gt;% 
+DF_actual &lt;- import(&quot;../original_files/historical_data.csv&quot;) %&gt;% 
     select(-V1) %&gt;% 
     pivot_longer(cols = -Month, 
              names_to = &quot;domain&quot;,
@@ -442,12 +440,12 @@ DF_actual &lt;- import(&quot;../historical_data.csv&quot;) %&gt;%
     
 
 # predicted answer ... month variables
-DF_predicted_1 &lt;- import(&quot;../Wave1+2data.csv&quot;) %&gt;%
+DF_predicted_1 &lt;- import(&quot;../original_files/Wave1+2data.csv&quot;) %&gt;%
     filter(phase == 1) %&gt;% 
     select(team_name, domain, phase, Month.1:Month.12)
 
 # kind of unclear what scores wave 2 were compared to but guess is 1-12 since no historical data is there for 7-18 we assume that&#39;s just the time from start of the study
-DF_predicted_2 &lt;- import(&quot;../Wave1+2data.csv&quot;) %&gt;%
+DF_predicted_2 &lt;- import(&quot;../original_files/Wave1+2data.csv&quot;) %&gt;%
     filter(phase == 2) %&gt;% 
     select(team_name, domain, phase, Month.7:Month.18) %&gt;% 
     rename(Month.12 = Month.18,
@@ -777,6 +775,7 @@ that data should be at least examined because it does not appropriately
 complete the required task.</p>
 <pre class="r"><code>teams &lt;- unique(DF_predicted$team_name)
 no_variable &lt;- list()
+
 for (team in teams){
     for (phase_num in 1:2){
         temp &lt;- DF_predicted %&gt;% 
@@ -786,28 +785,25 @@ for (team in teams){
                     names_from = Month,
                     values_from = Predicted_Score) %&gt;% 
             select(-team_name)
-  
-          if (nrow(temp) &gt; 2){
-            no_variable[[paste0(team, &quot;_&quot;, phase_num)]] &lt;- data.frame(
+        
+            if (nrow(temp) &gt; 0){
+                no_variable[[paste0(team, &quot;_&quot;, phase_num)]] &lt;- data.frame(
                 sd = apply(temp %&gt;% select(-domain), 1, sd, na.rm = T),
                 domain = temp$domain,
                 team = team, 
                 phase = phase_num
-            )
-        
-    }
-  
+                )
+                }
   }
-  
 }
 
 sd_issues &lt;- bind_rows(no_variable)
 
 nrow(sd_issues) # total number of teams by domains by phase</code></pre>
-<pre><code>## [1] 647</code></pre>
+<pre><code>## [1] 726</code></pre>
 <pre class="r"><code>nrow(sd_issues %&gt;% filter(sd == 0)) # number of problematic estimates </code></pre>
-<pre><code>## [1] 94</code></pre>
-<p>Therefore, 14.53% of team and phase combinations are potentially odd
+<pre><code>## [1] 101</code></pre>
+<p>Therefore, 13.91% of team and phase combinations are potentially odd
 data.</p>
 <p>Given the potential issues with the data, we did not continue with
 the judgment of learning analysis. It was unclear how to interpret the

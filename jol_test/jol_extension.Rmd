@@ -35,7 +35,7 @@ To complete this analysis, we first looked for the appropriate author provided d
 
 ```{r}
 # actual / real answer ... historical data by month 
-DF_actual <- import("../historical_data.csv") %>% 
+DF_actual <- import("../original_files/historical_data.csv") %>% 
 	select(-V1) %>% 
 	pivot_longer(cols = -Month, 
 			 names_to = "domain",
@@ -44,12 +44,12 @@ DF_actual <- import("../historical_data.csv") %>%
 	
 
 # predicted answer ... month variables
-DF_predicted_1 <- import("../Wave1+2data.csv") %>%
+DF_predicted_1 <- import("../original_files/Wave1+2data.csv") %>%
 	filter(phase == 1) %>% 
 	select(team_name, domain, phase, Month.1:Month.12)
 
 # kind of unclear what scores wave 2 were compared to but guess is 1-12 since no historical data is there for 7-18 we assume that's just the time from start of the study
-DF_predicted_2 <- import("../Wave1+2data.csv") %>%
+DF_predicted_2 <- import("../original_files/Wave1+2data.csv") %>%
 	filter(phase == 2) %>% 
 	select(team_name, domain, phase, Month.7:Month.18) %>% 
 	rename(Month.12 = Month.18,
@@ -289,6 +289,7 @@ Another issue is that some teams' scores are simply the same score repeated for 
 ```{r}
 teams <- unique(DF_predicted$team_name)
 no_variable <- list()
+
 for (team in teams){
 	for (phase_num in 1:2){
 		temp <- DF_predicted %>% 
@@ -298,16 +299,16 @@ for (team in teams){
 					names_from = Month,
 					values_from = Predicted_Score) %>% 
 			select(-team_name)
-  
-		  	no_variable[[paste0(team, "_", phase_num)]] <- data.frame(
+		
+			if (nrow(temp) > 0){
+				no_variable[[paste0(team, "_", phase_num)]] <- data.frame(
 		  		sd = apply(temp %>% select(-domain), 1, sd, na.rm = T),
 		  		domain = temp$domain,
 		  		team = team, 
 		  		phase = phase_num
-		  	)
-  
+				)
+				}
   }
-  
 }
 
 sd_issues <- bind_rows(no_variable)
