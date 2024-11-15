@@ -3,7 +3,7 @@ library(lme4)
 library(car)
 options(max.print = 20000, scipen = 1000)
 
-dat <- read.csv("dat_for_analyses.csv", stringsAsFactors = FALSE)
+dat <- read.csv("original_files/dat_for_analyses.csv", stringsAsFactors = FALSE)
 
 phase1 <- dat %>% 
 	filter(phase == 1) %>%

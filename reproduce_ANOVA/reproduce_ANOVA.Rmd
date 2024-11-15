@@ -1,0 +1,136 @@
+---
+title: "Wave 1+2 Analyses"
+author: "Igor Grossmann"
+date: "2/25/2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(forecast)
+library(psych)
+library(tidyverse)
+library(stats) #to get p.adjust
+library(irr)
+library(lme4)
+library(ggplot2)
+library(tidyr)
+library(emmeans)
+library(car)
+library(jtools)
+library(dplyr)
+library(ggsci)
+library(Hmisc)
+library(lubridate)
+library(statcomp) #to get complexity measures for time series
+library(tsibble) #to converte into time series tibble for tidy analyses
+#install.packages("CGPfunctions")
+library(CGPfunctions) #to graph change in trends over time.
+library(partR2) #to get partR2 for LME models
+library(moments) #to get skewness
+library(ggpubr) #to combine plots
+#library(simr) # to simulate power - not useful in posthoc designs
+library(rstanarm) #to get bayesian equivalent of difference tests
+library(bayestestR) #to get BayesF factor from BIC scores of different lmer models
+library(ggdist) #to get raincloud
+library(tidyquant) #to get raincloud plots
+
+options(max.print = 20000, scipen = 1000)
+
+```
+
+```{r Import Data}
+dat <- read.csv("../original_files/dat_for_analyses.csv", stringsAsFactors = FALSE)
+dat_long <- read.csv("../original_files/dat_long.csv", stringsAsFactors = FALSE)
+```
+
+```{r get simulated benchmark data & add RW to data}
+#add simulation benchmarks
+load("../original_files/sim/BenchmarkData_Combined.RData")
+
+sim.w1 <- Stats_all_benchmarks_raw
+sim.w1$Wave <- "First Tournament (May 2020)"
+sim.w1 <- subset(sim.w1, source != "Experts" & source != "Lay People")
+sim.w1$response <- sim.w1$Mean
+sim.w1$lower.CL <- sim.w1$CI_L
+sim.w1$upper.CL <- sim.w1$CI_U
+sim.w1$Type[sim.w1$source == "Benchmark 1"] <- "Historic Mean"
+sim.w1$Type[sim.w1$source == "Benchmark 2"] <- "Random Walk"
+sim.w1$Type[sim.w1$source == "Benchmark 3"] <- "Linear Regression"
+
+load("../original_files/sim/BenchmarkData_Combined_W2.RData")
+sim.w2 <- Stats_all_benchmarks_raw_w2
+sim.w2$Wave <- "Second Tournament (Nov 2020)"
+sim.w2 <- subset(sim.w2, source != "ExpertsW2")
+sim.w2$response <- sim.w2$Mean
+sim.w2$lower.CL <- sim.w2$CI_L
+sim.w2$upper.CL <- sim.w2$CI_U
+sim.w2$Type[sim.w1$source == "Benchmark 1"] <- "Historic Mean"
+sim.w2$Type[sim.w1$source == "Benchmark 2"] <- "Random Walk"
+sim.w2$Type[sim.w1$source == "Benchmark 3"] <- "Linear Regression"
+#get simulation-based random walk cut-offs - to be used for inspection of top teams
+
+#ADD PART how to use RW SIM scores per domain per wave to get the cutoff scores.
+
+##
+#subset benchmark, first
+sim.w1.rw <- sim.w1 %>%
+    filter(Type == 'Random Walk') %>%
+    mutate(rw.MASE.w1 = response) %>%
+    dplyr::select(domain, rw.MASE.w1)
+
+sim.w2.rw <- sim.w2 %>%
+    filter(Type == 'Random Walk') %>%
+    mutate(rw.MASE.w2 = response) %>%
+    dplyr::select(domain, rw.MASE.w2)
+
+##
+
+## add to the datafile
+dat <- dat %>%
+    left_join(sim.w1.rw)
+
+dat <- dat %>%
+    left_join(sim.w2.rw)
+
+## create cut-offs
+dat$compare_to_naive_rwf_MASE <- NA #first set to NA
+dat <- dat %>% #create difference score between MASE of estimate and RW MASE
+    mutate(
+        diff_to_naive_rwf_MASE = case_when(phase == 1 ~ MASE1_w1 - rw.MASE.w1 , phase ==
+                                    2 ~ MASE1_w2 - rw.MASE.w2)
+    )
+
+dat <- dat %>% #use the diff score values to calculate the cut offs (for graphs) later on
+    mutate(
+        compare_to_naive_rwf_MASE = case_when(
+            diff_to_naive_rwf_MASE < 1 ~ "Below Random Walk",
+            diff_to_naive_rwf_MASE == 1 ~ "Equal to Random Walk",
+            diff_to_naive_rwf_MASE > 1 ~ "Above Random Walk"
+        )
+    )
+```
+
+```{r}
+phase1 <- filter(dat, phase == 1)
+
+phase1$Method.code <- relevel(factor(phase1$Method.code), "Lay People") #use lay people as a reference group
+phase1$compare_to_naive_rwf_MASE.update <- ifelse(
+    phase1$compare_to_naive_rwf_MASE != "Equal to Naive rwf",
+    phase1$compare_to_naive_rwf_MASE,
+    ifelse(
+        phase1$compare_to_naive_rwf_MASE == "Equal to Naive rwf",
+        "Below Naive rwf",
+        NA
+    )
+)
+
+model.phase1.together <- lmer(log(MASE1_w1) ~ domain * isExpert.factor + (1 |   ResponseId), 
+                    data = phase1)
+car::Anova(model.phase1.together,
+         type = "III",
+         test.statistic = "F") #sig interaction!
+```

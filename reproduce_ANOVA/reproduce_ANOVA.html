@@ -356,10 +356,10 @@ display: none;
 </div>
 
 
-<pre class="r"><code>dat &lt;- read.csv(&quot;dat_for_analyses.csv&quot;, stringsAsFactors = FALSE)
-dat_long &lt;- read.csv(&quot;dat_long.csv&quot;, stringsAsFactors = FALSE)</code></pre>
+<pre class="r"><code>dat &lt;- read.csv(&quot;../original_files/dat_for_analyses.csv&quot;, stringsAsFactors = FALSE)
+dat_long &lt;- read.csv(&quot;../original_files/dat_long.csv&quot;, stringsAsFactors = FALSE)</code></pre>
 <pre class="r"><code>#add simulation benchmarks
-load(&quot;sim/BenchmarkData_Combined.RData&quot;)
+load(&quot;../original_files/sim/BenchmarkData_Combined.RData&quot;)
 
 sim.w1 &lt;- Stats_all_benchmarks_raw
 sim.w1$Wave &lt;- &quot;First Tournament (May 2020)&quot;
@@ -372,7 +372,7 @@ sim.w1$Type[sim.w1$source == &quot;Benchmark 1&quot;] &lt;- &quot;Historic Mean&
 <pre class="r"><code>sim.w1$Type[sim.w1$source == &quot;Benchmark 2&quot;] &lt;- &quot;Random Walk&quot;
 sim.w1$Type[sim.w1$source == &quot;Benchmark 3&quot;] &lt;- &quot;Linear Regression&quot;
 
-load(&quot;sim/BenchmarkData_Combined_W2.RData&quot;)
+load(&quot;../original_files/sim/BenchmarkData_Combined_W2.RData&quot;)
 sim.w2 &lt;- Stats_all_benchmarks_raw_w2
 sim.w2$Wave &lt;- &quot;Second Tournament (Nov 2020)&quot;
 sim.w2 &lt;- subset(sim.w2, source != &quot;ExpertsW2&quot;)
