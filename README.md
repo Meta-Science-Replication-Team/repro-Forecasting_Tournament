@@ -1,10 +1,10 @@
 # README
 
-Note: please open files using the `Meta-Rep-Forecasting.Rproject` to ensure the correct paths for reproducing.
+Note: please open files using the `repro-Forecasting_Tournament.Rproj` to ensure the correct paths for reproducing.
 
 ## Default Branch
 
-- [final_report]()
+- [final_report](https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament)
 	- Default branch that contains a cleaned up version of the repo
 	- Updated all our code to ensure it calls to original data
 
