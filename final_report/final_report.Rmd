@@ -46,13 +46,12 @@ The repository contains 124 files: 44 in the root directory and the rest in one 
 `Wave 1+2 Descriptives.Rmd` saves data to `dat_long.csv`:
 
 ```{r}
-file_name <- here::here("Wave 1+2 Descriptives.Rmd") 
+file_name <- here::here("../original_files/Wave 1+2 Descriptives.Rmd") 
 start_line <- 239
 end_line <- 240
 knitr::read_chunk(path = file_name, labels = "my-query-params", from = start_line, to = end_line) 
  
 file_in_repo <- stringr::str_sub(file_name, start = stringr::str_locate(file_name, "/repro")[1, "start"]) 
-  
 ```
 
 Specifically, lines `r start_line`:`r end_line` from `r file_in_repo`:
