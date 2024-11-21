@@ -36,8 +36,6 @@ The article aims to answer "How well can social scientists predict societal chan
 
 Overall, the main manuscript follows the plan outlined in the preregistration. In the main manuscript, the authors transparently describe the deviations and clearly distinguish between explanatory and confirmatory analyses in their manuscript. Yet, it is unclear what was the rationale for extending the recruitment of teams and the general sample, which resulted in much larger targeted sample sizes? The other deviations are rather minor, as detailed below.
 
-<!-- not sure about the random walk part Katja --> 
-
 From the authors' response to reviewers: 
 
 ::: infobox
