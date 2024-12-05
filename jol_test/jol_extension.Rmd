@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Perfect predictions would predict actual data with a slope of 1 and intercept of 0. Bias is considered the upward or downward difference from an intercept - generally, we have an overestimation bias found in the traditional Dunning-Kruger effect and other students of judgments of learning and numerical judgments of relatedness. Sensitivity is our ability judge the differences in effect size across time in this study. Sensitivity close to zero means no ability to predict effect size, while largest sensitivities relate to better ability to judge the change across time. 
+Perfect predictions would predict actual data with a slope of 1 and intercept of 0. Bias is considered the upward or downward difference from an intercept - generally, we have an overestimation bias found in the traditional Dunning-Kruger effect and other types of judgments of learning and numerical judgments of relatedness. Sensitivity is our ability judge the differences in effect size across time in this study. Sensitivity close to zero means no ability to predict effect size, while largest sensitivities relate to better ability to judge the change across time. 
 
 ## Summary
 
