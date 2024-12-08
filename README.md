@@ -4,8 +4,9 @@
 
 1. Install R and RStudio
 2. Clone the repository. 
-If you don't have git installed on your device, or if you don't have experience with version control, you can download a zip file rather than close the repo (step 2).
+If you don't have git installed on your device, or if you don't have experience with version control, you can download a zip file rather than clone the repo.
 3. Double click on `repro-Forecasting_Tournament.Rproj` to open the project in RStudio.
+4. Open `final_report\final_report.html` in the browser and check section 6, Session Info for info about which R packages you need to have installed in order to knit the final report yourself.
 4. Knit `final_report\final_report.Rmd`. Alternatively, you can open `final_report\final_report.html` in the browser. 
 The `html` file is the output we most recently knit.
 

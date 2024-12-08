@@ -60,4 +60,9 @@ Given the results from the reproducibility check and the results for Robustness 
 ```{r, child=here::here("jol_test", "jol_extension.Rmd")}
 ```
 
+# Session Info
+
+```{r}
+sessionInfo()
+```
 
