@@ -327,11 +327,6 @@ We will first investigate overall forecasting accuracy in behavioral and social 
 
 In the manuscript, authors provide more details on the analysis. To our understanding, the conducted analysis slightly deviates from the preregistered analysis. Such as: 
 
-- **Main Text: Not reported**; 
-- **Preregistration**: *Compare forecasted models against the naïve baseline model*.
-
-Comment: The main text does not explicitly mention the comparison against the naive baseline model, which creates ambiguity.
-
 - **Main Text**: *(1): The historical mean, calculated by randomly resampling the historical time series data;* 
 - **Preregistration**: *Average classic naive forecasting estimator.*
 
