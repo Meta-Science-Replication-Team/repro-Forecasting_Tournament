@@ -3,6 +3,8 @@ title: "Reproducibility Report for: The Forecasting Collaborative. Insights into
 author: "Ana Martinovici, Ekaterina Pronizius, Erin M. Buchanan (order in report)"
 date: "Last compiled on `r Sys.time()`"
 output: 
+    pdf_document:
+        latex_engine: xelatex
     bookdown::html_document2:
         toc: true
         css: !expr here::here("final_report", "style.css")
@@ -15,7 +17,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-For the original version of our pre-re-analysis plan, see [Link to the original re-analysis plan](https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament/blob/c184756586011cb0b9f8283a771e6a44db74861c/Replication_AnaErinKatja/replication_report.Rmd). In this report, original wording of our re-analysis plan is included in highlighted **orange** infoboxes, and the original wording of the pre-registration from the authors is present in **blue** infoboxes.
+For the original version of our pre-re-analysis plan, see [Link to the original re-analysis plan](https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament/blob/c184756586011cb0b9f8283a771e6a44db74861c/Replication_AnaErinKatja/replication_report.Rmd). In this report, original wording of our re-analysis plan is included in highlighted **orange** infoboxes, and the original wording of the pre-registration from the authors is present in **blue** infoboxes. Note that infoboxes are displayed only in the html output (not in pdf).
 
 ::: infobox
 The article aims to answer "How well can social scientists predict societal change, and what processes underlie their predictions?" (abstract, page 484). Our robustness reproduction will focus on a subset of the analyses reported in the paper. Specifically, we will focus on results and claims reported in the section "How accurate were behavioural and social scientists at forecasting?" (pages 485-486). For this section, we plan to:

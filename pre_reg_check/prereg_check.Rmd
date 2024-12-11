@@ -5,7 +5,7 @@ date: "Last compiled on `r Sys.time()`"
 output: 
     bookdown::html_document2:
         toc: true
-        css: style.css
+        css: !expr here::here("final_report", "style.css")
         toc_float: 
             collapsed: false
         number_sections: true
@@ -20,6 +20,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Summary
+
+When comparing the manuscript against the preregistration, we used this version of the preregistration: https://osf.io/u9x4m Note that there are more preregistration documents, as explained in the infobox below.
 
 Overall, the main manuscript follows the plan outlined in the preregistration. In the main manuscript, the authors transparently describe the deviations and clearly distinguish between explanatory and confirmatory analyses in their manuscript. Yet, it is unclear what was the rationale for extending the recruitment of teams and the general sample, which resulted in much larger targeted sample sizes? The other deviations are rather minor, as detailed below.
 
@@ -282,7 +284,7 @@ The description of the categorization is almost identical to that provided in th
 We will next categorize teams based on compositions. First, we will sort contributors into three categories: 
  1. singular forecaster; 
  2. small group (n < 6); 
- 3. large group (n ≥ 6). 
+ 3. large group (n $\ge$ 6). 
  
 Next, we will sort teams based on disciplinary orientation: 
  1. behavioral sciences; 
@@ -325,7 +327,9 @@ MASE is operationalized in the "Hypotheses" of the present preregistration, whic
 We will first investigate overall forecasting accuracy in behavioral and social sciences by examining MASE for each of the forecasting domains. Using MASE scores will allow us to compare forecasted models against the naïve baseline model. We will also compare forecasting accuracy agaist accuracy of classic naive forecasting estimators (i. average and ii. seting all forecasts to be the value of the last observation).
 :::
 
-In the manuscript, authors provide more details on the analysis. To our understanding, the conducted analysis slightly deviates from the preregistered analysis. Such as: 
+It is unclear what exact specification is used for the naïve baseline model. Based on the text in the infobox above, we assume that this is something different than the average and setting all forecasts to be the value of the last observations - as these are referred to as other comparisons that will be performed.
+
+To our understanding, the conducted analysis slightly deviates from the preregistered analysis. Such as: 
 
 - **Main Text**: *(1): The historical mean, calculated by randomly resampling the historical time series data;* 
 - **Preregistration**: *Average classic naive forecasting estimator.*
