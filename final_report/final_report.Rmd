@@ -1,10 +1,9 @@
 ---
-title: "Reproducibility Report for: The Forecasting Collaborative. Insights into the accuracy of social scientists’ forecasts of societal change"
+title: 'Reproducibility Report for: The Forecasting Collaborative. Insights into the
+  accuracy of social scientists’ forecasts of societal change'
 author: "Ana Martinovici, Ekaterina Pronizius, Erin M. Buchanan (order in report)"
 date: "Last compiled on `r Sys.time()`"
 output: 
-    pdf_document:
-        latex_engine: xelatex
     bookdown::html_document2:
         toc: true
         css: !expr here::here("final_report", "style.css")
