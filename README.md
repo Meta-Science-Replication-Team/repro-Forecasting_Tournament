@@ -1,5 +1,7 @@
 # README
 
+[![DOI](https://zenodo.org/badge/756933574.svg)](https://zenodo.org/badge/latestdoi/756933574)
+
 ## How to reproduce our final report
 
 1. Install R and RStudio
