@@ -1,0 +1,20 @@
+---
+title: "Transparency statement for"
+subtitle: |
+  “Reproducibility Report for: The Forecasting Collaborative. \
+  Insights into the accuracy of social scientists’ forecasts of societal change \
+  (version last compiled on 2024-12-11 20:28:12.443407)”
+author: "Ana Martinovici, Ekaterina Pronizius, Erin M. Buchanan (order in report)"
+date: "Last compiled on `r format(Sys.time(), '%Y-%m-%d at %H:%M:%S')`"
+output: pdf_document
+---
+
+# Version transparency
+
+The reproducibility check was completed in December 2024, based on the version of the authors' repository available at that time (i.e., commit [32cfd57](https://github.com/grossmania/Forecasting-Tournament/tree/32cfd57c635d08a54a2eff8f735382c3c16336ac) on branch `main` of <https://github.com/grossmania/Forecasting-Tournament>).
+
+To ensure transparency and long-term verifiability, we created an unsynchronized fork at <https://github.com/anamartinovici/Forecasting-Tournament>. The evaluated repository state (i.e., commit 32cfd57) is available at: <https://github.com/anamartinovici/Forecasting-Tournament/tree/32cfd57c635d08a54a2eff8f735382c3c16336ac>
+
+# Materials availability
+
+Materials related to the reproducibility check (including code, preregistration, and report files) are available at <https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament>. An archival snapshot of version v1.0.0 is preserved on Zenodo (<https://zenodo.org/records/16698261>, DOI 10.5281/zenodo.16698260).
