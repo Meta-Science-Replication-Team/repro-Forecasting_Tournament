@@ -13,7 +13,7 @@ Perfect predictions would predict actual data with a slope of 1 and intercept of
 
 ## Summary
 
-We analyzed the data as intended but found results that were improbable given the range/scale of the data and deviated from our expected values. We then investigated the data to determine if these values were due to large outliers, out of range data, misalignment of values, or simply results not in line with expectations. As shown below, we found potential issues with the data used in analyses, which draw into question our ability to interpret any results from this analysis. The report of the analyses and the exploration of the data are shown below. 
+We analyzed the data as intended but found results that were improbable given the range/scale of the data and deviated from our expected values. We then investigated the data to determine if these values were due to large outliers, out of range data, misalignment of values, or simply results not in line with expectations. As shown below, we found potential issues with the data for this robustness check, which draw into question our ability to interpret any results from this analysis. The report of the analyses and the exploration of the data are shown below. 
 
 ### Libraries
 
@@ -45,12 +45,12 @@ DF_actual <- import(here::here("original_files", "historical_data.csv")) %>%
 # predicted answer ... month variables
 DF_predicted_1 <- import(here::here("original_files", "Wave1+2data.csv")) %>%
 	filter(phase == 1) %>% 
-	select(team_name, domain, phase, Month.1:Month.12)
+	select(team_name, domain, phase, Month.1:Month.12, basis_5_TEXT, model, theory)
 
 # kind of unclear what scores wave 2 were compared to but guess is 1-12 since no historical data is there for 7-18 we assume that's just the time from start of the study
 DF_predicted_2 <- import(here::here("original_files", "Wave1+2data.csv")) %>%
 	filter(phase == 2) %>% 
-	select(team_name, domain, phase, Month.7:Month.18) %>% 
+	select(team_name, domain, phase, Month.7:Month.18, basis_5_TEXT, model, theory) %>% 
 	rename(Month.12 = Month.18,
 		  Month.11 = Month.17,
 		  Month.10 = Month.16,
@@ -231,10 +231,11 @@ One thing we noticed by reviewing the data for the very high bias/sensitivity te
 ```{r}
 # note we went back to DF_predicted because it's the original raw data before edits in DF_long
 DF_predicted %>% 
-	filter(team_name == "TheMets")
+	filter(team_name == "TheMets") %>% 
+	select(team_name, domain, phase, Predicted_Score)
 ```
 
-The odds of teams entering the same scores, for all their estimates, for odd months and then separately for even months seems very low. To investigate this problem on a larger scale, we calculated the correlation matrix of each team's scores. We then grabbed the lower triangle of the correlations (i.e., all unique pairwise correlations that do not include the month correlated with itself). Any team with a perfect correlation between monthly estimates, we marked as suspicious. 
+The odds of teams entering the same scores, for all their estimates, for odd months and then separately for even months seemed very low. To investigate this problem on a larger scale, we calculated the correlation matrix of each team's scores. We then grabbed the lower triangle of the correlations (i.e., all unique pairwise correlations that do not include the month correlated with itself across domains). Any team with a perfect correlation between monthly estimates, we marked as inappropriate for the analyses we were trying to do for this robustness check. 
 
 ```{r}
 teams <- unique(DF_predicted$team_name)
@@ -280,11 +281,23 @@ nrow(correl_total) # number of teams/phases that have odd correlations
 length(correl_num) # total number of possible team/phase combos
 ```
 
-Therefore, `r round(nrow(correl_total)/length(correl_num)*100,2)`% of team and phase combinations are potentially odd data.  
+Therefore, `r round(nrow(correl_total)/length(correl_num)*100,2)`% of team and phase combinations are potentially unusable for this analysis.
+
+The manuscript authors clarified that the information about the way teams created numbers was included in the dataset. For those teams, we output their reasons to a separate file for review (as it is too long to include in this report). 
+
+```{r}
+DF_predicted %>% 
+	filter(team_name %in% correl_total$name) %>% 
+	select(basis_5_TEXT, model, theory) %>% 
+	unique() %>% 
+	export(., "estimation_reasons.csv")
+```
 
 No variability in scores:
 
-Another issue is that some teams' scores are simply the same score repeated for each month - we don't know if that's what they entered, but that data should be at least examined because it does not appropriately complete the required task. 
+Another issue is that some teams' scores are simply the same score repeated for each month - as some people indicated in their answers - which would usually be excluded in a judgment of learning/memory task as not completing the task correctly.
+
+For linear regression the slope is calculated as: $\hat{\beta}_i = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}$. If there is no variance in X (the estimated effect size scores), we cannot use the data because the denominator of the equation calculates to 0.
 
 ```{r}
 teams <- unique(DF_predicted$team_name)
@@ -319,6 +332,4 @@ nrow(sd_issues %>% filter(sd == 0)) # number of problematic estimates
 
 ```
 
-Therefore, `r round(nrow(sd_issues %>% filter(sd == 0))/nrow(sd_issues)*100,2)`% of team and phase combinations are potentially odd data.  
-
-Given the potential issues with the data, we did not continue with the judgment of learning analysis. It was unclear how to interpret the results given the questions about the data. 
+Therefore, `r round(nrow(sd_issues %>% filter(sd == 0))/nrow(sd_issues)*100,2)`% of team and phase combinations unusable for a linear regression analysis. Given these issues in the data, we did not proceed with the judgment-of-learning analysis, as the preceding comments made the results difficult to interpret.

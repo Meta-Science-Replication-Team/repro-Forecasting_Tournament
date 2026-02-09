@@ -7,11 +7,13 @@ output:
     bookdown::html_document2:
         toc: true
         css: !expr here::here("final_report", "style.css")
-        toc_float: 
+        toc_float:
             collapsed: false
         number_sections: true
         code_folding: show
         theme: cerulean
+    # pdf_document:
+    #   latex_engine: xelatex
 editor_options: 
   chunk_output_type: console
 ---

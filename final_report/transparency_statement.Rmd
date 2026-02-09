@@ -2,8 +2,7 @@
 title: "Transparency statement for"
 subtitle: |
   “Reproducibility Report for: The Forecasting Collaborative. \
-  Insights into the accuracy of social scientists’ forecasts of societal change \
-  (version last compiled on 2024-12-11 20:28:12.443407)”
+  Insights into the accuracy of social scientists’ forecasts of societal change”
 author: "Ana Martinovici, Ekaterina Pronizius, Erin M. Buchanan (order in report)"
 date: "Last compiled on `r format(Sys.time(), '%Y-%m-%d at %H:%M:%S')`"
 output: pdf_document
@@ -18,3 +17,7 @@ To ensure transparency and long-term verifiability, we created an unsynchronized
 # Materials availability
 
 Materials related to the reproducibility check (including code, preregistration, and report files) are available at <https://github.com/Meta-Science-Replication-Team/repro-Forecasting_Tournament>. An archival snapshot of version v1.0.0 is preserved on Zenodo (<https://zenodo.org/records/16698261>, DOI 10.5281/zenodo.16698260).
+
+# OSF Link and Update
+
+The complete report, along with author response, can be found at: <https://osf.io/mepbv/overview>. Per request, the robustness check was updated from first publication on `2024-12-11 20:28:12.443407`. The reproducibility and preregistration sections did not change. 
