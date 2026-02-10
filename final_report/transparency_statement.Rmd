@@ -20,4 +20,4 @@ Materials related to the reproducibility check (including code, preregistration,
 
 # OSF Link and Update
 
-The complete report, along with author response, can be found at: <https://osf.io/mepbv/overview>. Per request, the robustness check was updated from first publication on `2024-12-11 20:28:12.443407`. The reproducibility and preregistration sections did not change. 
+The complete report, along with author response, can be found at: <https://osf.io/mepbv/overview>. Per request 2026-02-09, the robustness check was updated from first publication on (v1.0.0 initially published on 2024-12-11 20:28:12.443407). The reproducibility and preregistration sections did not change. 
